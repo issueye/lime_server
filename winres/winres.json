@@ -1,0 +1,60 @@
+{
+  "RT_GROUP_ICON": {
+    "APP": {
+      "0000": [
+        "icon.png"
+      ]
+    }
+  },
+  "RT_MANIFEST": {
+    "#1": {
+      "0409": {
+        "identity": {
+          "name": "青柠版本管理系统",
+          "version": "1.0.0.1"
+        },
+        "description": "程序版本发布管理工具",
+        "minimum-os": "win7",
+        "execution-level": "as invoker",
+        "ui-access": false,
+        "auto-elevate": false,
+        "dpi-awareness": "system",
+        "disable-theming": false,
+        "disable-window-filtering": false,
+        "high-resolution-scrolling-aware": false,
+        "ultra-high-resolution-scrolling-aware": false,
+        "long-path-aware": false,
+        "printer-driver-isolation": false,
+        "gdi-scaling": false,
+        "segment-heap": false,
+        "use-common-controls-v6": false
+      }
+    }
+  },
+  "RT_VERSION": {
+    "#1": {
+      "0000": {
+        "fixed": {
+          "file_version": "1.0.0.1",
+          "product_version": "1.0.0.1"
+        },
+        "info": {
+          "0409": {
+            "Comments": "青柠版本管理系统",
+            "CompanyName": "杨桃桃",
+            "FileDescription": "青柠版本管理系统",
+            "FileVersion": "1.0.0.1",
+            "InternalName": "青柠版本管理系统",
+            "LegalCopyright": "杨桃桃 @ 2024",
+            "LegalTrademarks": "",
+            "OriginalFilename": "",
+            "PrivateBuild": "",
+            "ProductName": "杨桃桃",
+            "ProductVersion": "v1.0.0-alpha.1",
+            "SpecialBuild": ""
+          }
+        }
+      }
+    }
+  }
+}

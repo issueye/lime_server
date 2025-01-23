@@ -1,0 +1,170 @@
+definitions:
+  controller.Response:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+    type: object
+  model.User:
+    properties:
+      avatar:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      nick_name:
+        type: string
+      password:
+        type: string
+      updated_at:
+        type: string
+      userRole:
+        allOf:
+        - $ref: '#/definitions/model.UserRole'
+        description: 一个操作员只能有一个角色
+      username:
+        type: string
+    type: object
+  model.UserRole:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      role_id:
+        type: integer
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  requests.LoginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  response.Auth:
+    properties:
+      id:
+        type: integer
+      token:
+        type: string
+      user:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: golang 定时任务调度服务系统v1.0
+  title: 定时任务调度服务系统v1.0
+  version: V1.1
+paths:
+  /api/v1/admin/userInfo:
+    get:
+      description: 获取用户信息
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'code: 200 成功'
+          schema:
+            allOf:
+            - $ref: '#/definitions/controller.Response'
+            - properties:
+                Data:
+                  $ref: '#/definitions/model.User'
+              type: object
+        "500":
+          description: 错误返回内容
+          schema:
+            $ref: '#/definitions/controller.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取用户信息
+      tags:
+      - 用户
+  /api/v1/auth/login:
+    post:
+      description: 用户登录
+      parameters:
+      - description: 用户名、密码
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/requests.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'code: 200 成功'
+          schema:
+            allOf:
+            - $ref: '#/definitions/controller.Response'
+            - properties:
+                Data:
+                  $ref: '#/definitions/response.Auth'
+              type: object
+        "500":
+          description: 错误返回内容
+          schema:
+            $ref: '#/definitions/controller.Response'
+      summary: 用户登录
+      tags:
+      - 基础接口
+  /api/v1/auth/logout:
+    get:
+      description: 退出登录
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'code: 200 成功'
+          schema:
+            $ref: '#/definitions/controller.Response'
+        "500":
+          description: 错误返回内容
+          schema:
+            $ref: '#/definitions/controller.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 退出登录
+      tags:
+      - 基础接口
+  /api/v1/auth/refresh:
+    get:
+      description: 刷新Token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'code: 200 成功'
+          schema:
+            allOf:
+            - $ref: '#/definitions/controller.Response'
+            - properties:
+                Data:
+                  $ref: '#/definitions/response.Auth'
+              type: object
+        "500":
+          description: 错误返回内容
+          schema:
+            $ref: '#/definitions/controller.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 刷新Token
+      tags:
+      - 基础接口
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
