@@ -51,5 +51,11 @@ func InitProjectRouter(r *gin.RouterGroup) {
 			version.DELETE(":id", v1.DeleteVersion)
 			version.POST("list", v1.VersionList)
 		}
+
+		// Compile routes
+		compile := project.Group("compile")
+		{
+			compile.POST("", v1.Compile)
+		}
 	}
 }

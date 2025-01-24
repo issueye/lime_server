@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing/transport"
 )
 
 func GetRepoInfo(info *model.ProjectInfo) error {
@@ -24,14 +25,24 @@ func GetRepoInfo(info *model.ProjectInfo) error {
 	}
 	defer os.RemoveAll(tmpDir)
 
-	// 克隆仓库
-	repo, err := git.PlainClone(tmpDir, false, &git.CloneOptions{
+	cloneOptions := &git.CloneOptions{
 		URL:               repoURL,
 		Progress:          os.Stdout,
 		NoCheckout:        true,
 		SingleBranch:      false,
 		RecurseSubmodules: git.DefaultSubmoduleRecursionDepth,
-	})
+	}
+
+	if info.ProxyUrl != "" {
+		cloneOptions.ProxyOptions = transport.ProxyOptions{
+			URL:      info.ProxyUrl,
+			Username: info.ProxyUser,
+			Password: info.ProxyPass,
+		}
+	}
+
+	// 克隆仓库
+	repo, err := git.PlainClone(tmpDir, false, cloneOptions)
 	if err != nil {
 		fmt.Printf("克隆仓库失败: %v\n", err)
 		return err
@@ -102,18 +113,23 @@ func GetRepoInfo(info *model.ProjectInfo) error {
 		}
 
 		// 保存分支信息
-		err = branchSrv.CreateBatch(branchs)
-		if err != nil {
-			fmt.Printf("保存分支信息失败: %v\n", err)
-			return err
+		if len(branchs) > 0 {
+			err = branchSrv.CreateBatch(branchs)
+			if err != nil {
+				fmt.Printf("保存分支信息失败: %v\n", err)
+				return err
+			}
 		}
 
 		// 保存 Tag 信息
-		err = tagSrv.CreateBatch(tags)
-		if err != nil {
-			fmt.Printf("保存 Tag 信息失败: %v\n", err)
-			return err
+		if len(tags) > 0 {
+			err = tagSrv.CreateBatch(tags)
+			if err != nil {
+				fmt.Printf("保存 Tag 信息失败: %v\n", err)
+				return err
+			}
 		}
+
 	}
 
 	return nil

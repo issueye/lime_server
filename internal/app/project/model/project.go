@@ -16,6 +16,9 @@ type ProjectBase struct {
 	RepoUser     string        `gorm:"column:repo_user;size:200;not null;comment:git 用户名称;" json:"repo_user"`         // git 用户名称
 	RepoPassword string        `gorm:"column:repo_password;size:200;not null;comment:git 用户密码;" json:"repo_password"` // git 用户密码
 	Description  string        `gorm:"column:description;size:200;not null;comment:项目描述;" json:"description"`         // 项目描述
+	ProxyUrl     string        `gorm:"column:proxy_url;size:200;not null;comment:代理地址;" json:"proxy_url"`             // 代理地址
+	ProxyUser    string        `gorm:"column:proxy_user;size:200;not null;comment:代理用户名称;" json:"proxy_user"`         // 代理用户名称
+	ProxyPass    string        `gorm:"column:proxy_pass;size:200;not null;comment:代理用户密码;" json:"proxy_pass"`         // 代理用户密码
 	Branchs      []BranchInfo  `gorm:"foreignKey:ProjectId;references:id;" json:"branchs"`                            // 分支信息
 	Tags         []TagInfo     `gorm:"foreignKey:ProjectId;references:id;" json:"tags"`                               // Tag 信息
 	Versions     []VersionInfo `gorm:"foreignKey:ProjectId;references:id;" json:"versions"`                           // 版本信息
