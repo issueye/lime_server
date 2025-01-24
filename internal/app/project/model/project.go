@@ -47,7 +47,6 @@ type TagInfo struct {
 
 type TagBase struct {
 	ProjectId     uint   `gorm:"column:project_id;size:200;not null;comment:项目ID;" json:"project_id"`                        // 项目ID
-	BranchName    string `gorm:"column:branch_name;size:200;not null;comment:分支名称;" json:"branch_name"`                      // 分支名称
 	Hash          string `gorm:"column:hash;size:200;not null;comment:Hash;" json:"hash"`                                    // Hash 值
 	Name          string `gorm:"column:name;size:200;comment:标签名称;" json:"name"`                                             // 标签名称
 	Description   string `gorm:"column:description;size:200;comment:标签描述;" json:"description"`                               // 标签描述

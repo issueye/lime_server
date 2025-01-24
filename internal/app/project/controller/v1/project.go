@@ -171,3 +171,38 @@ func GetProject(c *gin.Context) {
 
 	ctl.SuccessData(info)
 }
+
+// SyncProject doc
+//
+//	@tags			项目信息管理
+//	@Summary		同步项目信息
+//	@Description	同步项目信息
+//	@Produce		json
+//	@Param			id		path	int	true	"项目信息id"
+//	@Success		200	{object}	controller.Response	"code: 200 成功"
+//	@Failure		500	{object}	controller.Response						"错误返回内容"
+//	@Router			/api/v1/project/sync/{id} [get]
+//	@Security		ApiKeyAuth
+func SyncProject(c *gin.Context) {
+	ctl := controller.New(c)
+
+	id := c.Param("id")
+	if id == "" {
+		ctl.Fail("id不能为空")
+		return
+	}
+
+	i, err := strconv.Atoi(id)
+	if err != nil {
+		ctl.FailWithError(err)
+		return
+	}
+
+	err = logic.SyncProject(uint(i))
+	if err != nil {
+		ctl.FailWithError(err)
+		return
+	}
+
+	ctl.Success()
+}

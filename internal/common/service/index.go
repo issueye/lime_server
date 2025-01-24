@@ -155,6 +155,11 @@ func (b *BaseService[T]) Create(data *T) error {
 	return b.GetDB().Create(data).Error
 }
 
+// 批量创建数据
+func (b *BaseService[T]) CreateBatch(data []T) error {
+	return b.GetDB().Create(&data).Error
+}
+
 // 删除数据
 func (b *BaseService[T]) Delete(id uint) error {
 	return b.GetDB().Model(new(T)).Where("id = ?", id).Delete(new(T)).Error

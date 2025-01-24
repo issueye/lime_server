@@ -20,6 +20,7 @@ func InitProjectRouter(r *gin.RouterGroup) {
 		project.POST("", v1.CreateProject)
 		project.PUT("", v1.UpdateProject)
 		project.DELETE(":id", v1.DeleteProject)
+		project.POST("sync/:id", v1.SyncProject)
 
 		// Branch routes
 		branch := project.Group("branch")

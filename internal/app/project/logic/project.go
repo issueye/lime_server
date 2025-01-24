@@ -2,6 +2,7 @@ package logic
 
 import (
 	"lime/internal/app/project/model"
+	"lime/internal/app/project/repo"
 	"lime/internal/app/project/requests"
 	"lime/internal/app/project/service"
 	commonModel "lime/internal/common/model"
@@ -68,4 +69,15 @@ func ProjectList(condition *commonModel.PageQuery[*requests.QueryProject]) (*com
 
 func GetProject(id uint) (*model.ProjectInfo, error) {
 	return service.NewProject().GetById(id)
+}
+
+func SyncProject(id uint) error {
+	info, err := service.NewProject().GetById(id)
+	if err != nil {
+		return err
+	}
+
+	repo.GetRepoInfo(info)
+
+	return nil
 }
