@@ -11,6 +11,26 @@ import (
 	"github.com/dop251/goja"
 )
 
+func SaveCompileConfig(req *requests.SaveCompileConfigRequest) error {
+	srv := service.NewCompile()
+	err := srv.DeleteByFields(map[string]any{"project_id": req.ProjectId})
+	if err != nil {
+		return err
+	}
+
+	return srv.Create(&req.CompileInfo)
+}
+
+func GetConfigByProjectId(projectId uint) (*model.CompileInfo, error) {
+	srv := service.NewCompile()
+	info, err := srv.GetByField("project_id", projectId)
+	if err != nil {
+		return nil, err
+	}
+
+	return info, nil
+}
+
 // CompileProject 编译项目
 func CompileProject(req *requests.CompileRequest) error {
 	srv := service.NewCompile()
@@ -55,8 +75,8 @@ func CompileProgram(info model.CompileInfo) error {
 
 	// 设置环境变量
 	env := append(os.Environ(),
-		"GOOS="+info.Goos,
-		"GOARCH="+info.Goarch,
+		"GOOS="+info.Goos.String(),
+		"GOARCH="+info.Goarch.String(),
 	)
 	cmd.Env = env
 

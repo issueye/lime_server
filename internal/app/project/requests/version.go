@@ -58,7 +58,8 @@ func (req *CreateVersion) ToJson() string {
 }
 
 type QueryVersion struct {
-	KeyWords string `json:"keywords" form:"keywords"` // 关键词
+	KeyWords  string `json:"keywords" form:"keywords"`     // 关键词
+	ProjectId uint   `json:"project_id" form:"project_id"` // 项目ID
 }
 
 func NewQueryVersion() *commonModel.PageQuery[*QueryVersion] {

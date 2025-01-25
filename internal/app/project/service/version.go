@@ -25,7 +25,15 @@ func NewVersion(args ...any) *Version {
 func (r *Version) ListVersion(condition *commonModel.PageQuery[*requests.QueryVersion]) (*commonModel.ResPage[model.VersionInfo], error) {
 	return service.GetList[model.VersionInfo](condition, func(qu *requests.QueryVersion, d *gorm.DB) *gorm.DB {
 		if qu.KeyWords != "" {
-			d = d.Where("name like ? or remark like ?", "%"+qu.KeyWords+"%", "%"+qu.KeyWords+"%")
+			d = d.Where("branch_name like ? or description like ? or version like ?",
+				"%"+qu.KeyWords+"%",
+				"%"+qu.KeyWords+"%",
+				"%"+qu.KeyWords+"%",
+			)
+		}
+
+		if qu.ProjectId != 0 {
+			d = d.Where("project_id =?", qu.ProjectId)
 		}
 
 		return d

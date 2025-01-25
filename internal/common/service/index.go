@@ -137,12 +137,12 @@ func (b *BaseService[T]) UpdateByField(field string, value any, data map[string]
 }
 
 func (b *BaseService[T]) UpdatedatasByMap(conditions map[string]any, data map[string]any) error {
-	db := b.GetDB().Model(new(T))
+	srv := b.GetDB().Model(new(T))
 	for k, v := range conditions {
-		db = db.Where(k+" =?", v)
+		srv = srv.Where(k+" =?", v)
 	}
 
-	return db.Updates(data).Error
+	return srv.Updates(data).Error
 }
 
 // 更新ID更新数据(结构体)
@@ -163,6 +163,16 @@ func (b *BaseService[T]) CreateBatch(data []T) error {
 // 删除数据
 func (b *BaseService[T]) Delete(id uint) error {
 	return b.GetDB().Model(new(T)).Where("id = ?", id).Delete(new(T)).Error
+}
+
+// 保存数据
+func (b *BaseService[T]) SaveByCondition(condition map[string]any, data T) error {
+	srv := b.GetDB().Model(new(T))
+	for k, v := range condition {
+		srv = srv.Where(k+" =?", v)
+	}
+
+	return srv.Save(&data).Error
 }
 
 func (b *BaseService[T]) DeleteByFields(condition map[string]any) error {

@@ -1,29 +1,26 @@
 package model
 
-import "lime/internal/common/model"
+import (
+	"lime/internal/common/model"
+)
 
 type CompileInfo struct {
 	model.BaseModel
 	CompileBase
 }
 
-type Script struct {
-	Name    string `json:"name"`    // 脚本名称
-	Content string `json:"content"` // 脚本内容
-}
-
-type EnvVar struct {
-	Key   string `json:"key"`   // 环境变量键
-	Value string `json:"value"` // 环境变量值
-}
-
 type CompileBase struct {
-	Output  string   `json:"output"`   // 输出文件名
-	Goos    string   `json:"goos"`     // 目标操作系统
-	Goarch  string   `json:"goarch"`   // 目标架构
-	Flags   []string `json:"flags"`    // 编译标志
-	Ldflags string   `json:"ldflags"`  // 链接标志
-	Tags    string   `json:"tags"`     // 编译标签
-	Scripts []Script `json:"scripts"`  // 编译前执行的JavaScript脚本
-	EnvVars []EnvVar `json:"env_vars"` // 环境变量
+	ProjectId uint      `gorm:"column:project_id;size:200;not null;comment:项目ID;" json:"project_id"` // 项目ID
+	Output    string    `gorm:"column:output;size:-1;not null;comment:输出文件名;" json:"output"`         // 输出文件名
+	Goos      OS_TYPE   `gorm:"column:goos;type:int;comment:目标操作系统;" json:"goos"`                    // 目标操作系统 0: windows 1: linux 2: darwin
+	Goarch    ARCH_TYPE `gorm:"column:goarch;type:int;comment:目标架构;" json:"goarch"`                  // 目标架构 0: amd64 1: arm64
+	Flags     model.Arr `gorm:"column:flags;size:-1;comment:编译标志;" json:"flags"`                     // 编译标志
+	Ldflags   string    `gorm:"column:ldflags;size:-1;comment:链接标志;" json:"ldflags"`                 // 链接标志
+	Tags      string    `gorm:"column:tags;size:-1;comment:目标架构;" json:"tags"`                       // 编译标签
+	Scripts   Scripts   `gorm:"column:scripts;size:-1;comment:编译前执行的JavaScript脚本;" json:"scripts"`   // 编译前执行的JavaScript脚本
+	EnvVars   model.KVS `gorm:"column:env_vars;size:-1;comment:编译期注入变量;" json:"env_vars"`            // 编译期注入变量 追加到链接标志中
+}
+
+func (CompileInfo) TableName() string {
+	return "project_compile_info"
 }

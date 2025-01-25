@@ -18,3 +18,13 @@ func NewCompileRequest() *CompileRequest {
 func (r *CompileRequest) Validate() error {
 	return nil
 }
+
+type SaveCompileConfigRequest struct {
+	model.CompileInfo
+}
+
+func NewSaveCompileConfigRequest() *SaveCompileConfigRequest {
+	return &SaveCompileConfigRequest{
+		CompileInfo: model.CompileInfo{},
+	}
+}

@@ -33,6 +33,7 @@ func InitDATA(db *gorm.DB) {
 	db.AutoMigrate(&projectModel.BranchInfo{})
 	db.AutoMigrate(&projectModel.TagInfo{})
 	db.AutoMigrate(&projectModel.VersionInfo{})
+	db.AutoMigrate(&projectModel.CompileInfo{})
 
 	// admin
 	logic.InitRoles()
