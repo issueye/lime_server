@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/transport"
 )
 
@@ -130,6 +131,60 @@ func GetRepoInfo(info *model.ProjectInfo) error {
 			}
 		}
 
+	}
+
+	return nil
+}
+
+// 拉取代码到本地
+func PullCode(info *model.ProjectInfo, versionInfo model.VersionInfo) (*git.Repository, error) {
+	// 仓库地址
+	repoURL := info.RepoUrl
+	// 临时克隆目录
+	path := filepath.Join(global.ROOT_PATH, "temp")
+	tmpDir, err := os.MkdirTemp(path, "git-repo")
+	if err != nil {
+		fmt.Printf("创建临时目录失败: %v\n", err)
+		return nil, err
+	}
+
+	cloneOptions := &git.CloneOptions{
+		URL:               repoURL,
+		Progress:          os.Stdout,
+		RecurseSubmodules: git.DefaultSubmoduleRecursionDepth,
+		ReferenceName:     plumbing.NewRemoteReferenceName("origin", versionInfo.Hash),
+	}
+
+	if info.ProxyUrl != "" {
+		cloneOptions.ProxyOptions = transport.ProxyOptions{
+			URL:      info.ProxyUrl,
+			Username: info.ProxyUser,
+			Password: info.ProxyPass,
+		}
+	}
+
+	// 克隆仓库
+	repo, err := git.PlainClone(tmpDir, false, cloneOptions)
+	if err != nil {
+		fmt.Printf("克隆仓库失败: %v\n", err)
+		return nil, err
+	}
+
+	return repo, nil
+}
+
+// 切换代码到指定 HASH
+func Checkout(version model.VersionInfo, repo *git.Repository) error {
+	wTree, err := repo.Worktree()
+	if err != nil {
+		return err
+	}
+
+	err = wTree.Checkout(&git.CheckoutOptions{
+		Hash: plumbing.NewHash(version.Hash),
+	})
+	if err != nil {
+		return err
 	}
 
 	return nil

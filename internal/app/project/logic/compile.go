@@ -3,6 +3,7 @@ package logic
 import (
 	"fmt"
 	"lime/internal/app/project/model"
+	"lime/internal/app/project/repo"
 	"lime/internal/app/project/requests"
 	"lime/internal/app/project/service"
 	"os"
@@ -63,12 +64,30 @@ func CompileProject(projectId uint, versionId uint) error {
 }
 
 func CompileProgram(projectInfo model.ProjectInfo, versionInfo model.VersionInfo, info model.CompileInfo) error {
-	// 执行编译前的JavaScript脚本
-	if err := executeScripts(info.Scripts, info); err != nil {
-		return err
+	// 拉取代码到临时目录
+	gitRepo, err := repo.PullCode(&projectInfo, versionInfo)
+	if err != nil {
+		return fmt.Errorf("拉取代码失败: %v", err)
 	}
 
-	// 获取输出目录
+	// checkout 到指定版本
+	err = repo.Checkout(versionInfo, gitRepo)
+	if err != nil {
+		return fmt.Errorf("切换代码版本失败: %v", err)
+	}
+
+	// 获取仓库工作目录
+	workDir, err := gitRepo.Worktree()
+	if err != nil {
+		return fmt.Errorf("获取工作目录失败: %v", err)
+	}
+
+	// 执行编译前的JavaScript脚本
+	if err := executeScripts(info.Scripts, info); err != nil {
+		return fmt.Errorf("执行脚本失败: %v", err)
+	}
+
+	// 注入编译信息
 	inject := map[string]any{
 		"project": projectInfo,
 		"version": versionInfo,
@@ -76,18 +95,18 @@ func CompileProgram(projectInfo model.ProjectInfo, versionInfo model.VersionInfo
 		"println": fmt.Println,
 	}
 
+	// 编译表达式获取输出路径
 	program, err := expr.Compile(info.Output, expr.Env(inject))
 	if err != nil {
-		return err
+		return fmt.Errorf("编译输出路径表达式失败: %v", err)
 	}
 
-	// 执行编译命令
 	output, err := expr.Run(program, inject)
 	if err != nil {
-		return err
+		return fmt.Errorf("执行输出路径表达式失败: %v", err)
 	}
 
-	fmt.Println("路径:", output)
+	fmt.Println("输出路径:", output)
 
 	// 准备编译命令
 	args := []string{"build", "-o", output.(string)}
@@ -96,22 +115,26 @@ func CompileProgram(projectInfo model.ProjectInfo, versionInfo model.VersionInfo
 	ldflags := info.Ldflags
 	if len(info.EnvVars) > 0 {
 		for _, env := range info.EnvVars {
-			ldflags += " -X " + fmt.Sprintf(" -X %s=%s", env.Key, env.Value)
+			ldflags += fmt.Sprintf(" -X %s=%s", env.Key, env.Value)
 		}
 	}
 
-	if info.Ldflags != "" {
-		args = append(args, fmt.Sprintf("-ldflags=%s", info.Ldflags))
+	if ldflags != "" {
+		args = append(args, fmt.Sprintf("-ldflags=%s", ldflags))
 	}
 
 	if info.Tags != "" {
 		args = append(args, fmt.Sprintf("-tags=%s", info.Tags))
 	}
+
 	if len(info.Flags) > 0 {
 		args = append(args, info.Flags...)
 	}
 
 	cmd := exec.Command("go", args...)
+
+	// 设置工作目录到代码目录
+	cmd.Dir = workDir.Filesystem.Root()
 
 	// 设置环境变量
 	env := append(os.Environ(),

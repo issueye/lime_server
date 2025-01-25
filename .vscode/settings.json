@@ -74,5 +74,6 @@
         "windowsgui",
         "winres",
         "ying"
-    ]
+    ],
+    "marscode.chatLanguage": "cn"
 }
