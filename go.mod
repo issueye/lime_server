@@ -8,12 +8,14 @@ require (
 	github.com/cockroachdb/pebble v1.1.2
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/didip/tollbooth v4.0.2+incompatible
+	github.com/dop251/goja v0.0.0-20250114131315-46d383d606d3
 	github.com/gin-contrib/cors v1.7.2
 	github.com/gin-contrib/zap v1.1.4
 	github.com/gin-gonic/gin v1.10.0
 	github.com/glebarez/sqlite v1.11.0
 	github.com/go-git/go-git/v5 v5.13.2
 	github.com/godoes/gorm-oracle v1.6.14
+	github.com/gorilla/websocket v1.5.3
 	github.com/ncruces/go-sqlite3 v0.21.3
 	github.com/spf13/cast v1.7.1
 	github.com/swaggo/swag v1.16.4
@@ -49,7 +51,6 @@ require (
 	github.com/cockroachdb/tokenbucket v0.0.0-20230807174530-cc333fc44b06 // indirect
 	github.com/cyphar/filepath-securejoin v0.3.6 // indirect
 	github.com/dlclark/regexp2 v1.11.4 // indirect
-	github.com/dop251/goja v0.0.0-20250114131315-46d383d606d3 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.5 // indirect
