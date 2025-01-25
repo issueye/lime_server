@@ -9,6 +9,7 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/didip/tollbooth v4.0.2+incompatible
 	github.com/dop251/goja v0.0.0-20250114131315-46d383d606d3
+	github.com/expr-lang/expr v1.16.9
 	github.com/gin-contrib/cors v1.7.2
 	github.com/gin-contrib/zap v1.1.4
 	github.com/gin-gonic/gin v1.10.0

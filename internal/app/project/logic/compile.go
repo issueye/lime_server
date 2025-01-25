@@ -9,6 +9,7 @@ import (
 	"os/exec"
 
 	"github.com/dop251/goja"
+	"github.com/expr-lang/expr"
 )
 
 func SaveCompileConfig(req *requests.SaveCompileConfigRequest) error {
@@ -32,25 +33,64 @@ func GetConfigByProjectId(projectId uint) (*model.CompileInfo, error) {
 }
 
 // CompileProject 编译项目
-func CompileProject(req *requests.CompileRequest) error {
-	srv := service.NewCompile()
-	err := srv.Create(&req.CompileInfo)
+func CompileProject(projectId uint, versionId uint) error {
+	req, err := GetConfigByProjectId(projectId)
+	if err != nil {
+		return err
+	}
+
+	// 检查编译配置是否存在
+	if req == nil {
+		return fmt.Errorf("编译配置不存在")
+	}
+
+	// 获取项目信息
+	projectSrv := service.NewProject()
+	projectInfo, err := projectSrv.GetByMap(map[string]any{"id": projectId})
+	if err != nil {
+		return err
+	}
+
+	// 获取版本信息
+	versionSrv := service.NewVersion()
+	versionInfo, err := versionSrv.GetByMap(map[string]any{"id": versionId, "project_id": projectId})
 	if err != nil {
 		return err
 	}
 
 	// 执行编译
-	return CompileProgram(req.CompileInfo)
+	return CompileProgram(*projectInfo, *versionInfo, *req)
 }
 
-func CompileProgram(info model.CompileInfo) error {
+func CompileProgram(projectInfo model.ProjectInfo, versionInfo model.VersionInfo, info model.CompileInfo) error {
 	// 执行编译前的JavaScript脚本
 	if err := executeScripts(info.Scripts, info); err != nil {
 		return err
 	}
 
+	// 获取输出目录
+	inject := map[string]any{
+		"project": projectInfo,
+		"version": versionInfo,
+		"compile": info,
+		"println": fmt.Println,
+	}
+
+	program, err := expr.Compile(info.Output, expr.Env(inject))
+	if err != nil {
+		return err
+	}
+
+	// 执行编译命令
+	output, err := expr.Run(program, inject)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("路径:", output)
+
 	// 准备编译命令
-	args := []string{"build", "-o", info.Output}
+	args := []string{"build", "-o", output.(string)}
 
 	// 设置编译标志
 	ldflags := info.Ldflags
@@ -129,6 +169,8 @@ func executeScripts(scripts []model.Script, info model.CompileInfo) error {
 		if err != nil {
 			return fmt.Errorf("执行脚本 #%d 失败: %v", i+1, err)
 		}
+
+		fmt.Printf("脚本 #%d 执行完毕\n", i+1)
 	}
 
 	return nil

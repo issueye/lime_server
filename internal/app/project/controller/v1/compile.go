@@ -23,15 +23,33 @@ import (
 func Compile(c *gin.Context) {
 	ctl := controller.New(c)
 
-	req := requests.NewCompileRequest()
+	id := c.Param("id")
+	if id == "" {
+		ctl.Fail("id不能为空")
+		return
+	}
 
-	err := ctl.Bind(req)
+	// id 转换为 uint
+	i, err := strconv.Atoi(id)
 	if err != nil {
 		ctl.FailWithError(err)
 		return
 	}
 
-	err = logic.CompileProject(req)
+	versionId := c.Query("version_id")
+	if versionId == "" {
+		ctl.Fail("version_id不能为空")
+		return
+	}
+
+	// versionId 转换为 uint
+	i2, err := strconv.Atoi(versionId)
+	if err != nil {
+		ctl.FailWithError(err)
+		return
+	}
+
+	err = logic.CompileProject(uint(i), uint(i2))
 	if err != nil {
 		ctl.FailWithError(err)
 		return

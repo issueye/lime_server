@@ -32,20 +32,20 @@ type Message struct {
 // HandleWebSocket 处理WebSocket连接的方法
 func (s *WebSocketServer) HandleWebSocket(c *gin.Context) {
 	// 验证必要参数
-	clientID := c.Query("client_id")
-	if clientID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "缺少client_id参数"})
+	id := c.Query("id")
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "缺少[id]参数"})
 		return
 	}
 
-	taskID := c.Query("task_id")
-	if taskID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "缺少task_id参数"})
+	pId := c.Query("project_id")
+	if pId == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "缺少[project_id]参数"})
 		return
 	}
 
 	// 验证客户端是否已存在
-	connID := fmt.Sprintf("%s_%s", clientID, taskID)
+	connID := fmt.Sprintf("%s_%s", id, pId)
 	if existingClient := s.GetClientByID(connID); existingClient != nil {
 		c.JSON(http.StatusConflict, gin.H{"error": "客户端连接已存在"})
 		return
@@ -56,8 +56,8 @@ func (s *WebSocketServer) HandleWebSocket(c *gin.Context) {
 	if err != nil {
 		global.Logger.Error("升级WebSocket连接失败",
 			zap.Error(err),
-			zap.String("client_id", clientID),
-			zap.String("task_id", taskID))
+			zap.String("id", id),
+			zap.String("project_id", pId))
 		return
 	}
 
@@ -66,7 +66,7 @@ func (s *WebSocketServer) HandleWebSocket(c *gin.Context) {
 	conn.SetWriteDeadline(time.Now().Add(writeTimeout))
 
 	// 创建新的客户端实例
-	client := NewWebSocketClient(conn, fmt.Sprintf("client_%d", time.Now().UnixNano()), clientID, taskID)
+	client := NewWebSocketClient(conn, fmt.Sprintf("client_%d", time.Now().UnixNano()), id, pId)
 	s.AddClient(client)
 
 	// 资源清理
@@ -78,14 +78,14 @@ func (s *WebSocketServer) HandleWebSocket(c *gin.Context) {
 	// 发送欢迎消息
 	welcomeMsg := Message{
 		Type:    JsonMessage,
-		Content: gin.H{"message": "欢迎使用WebSocket服务！", "client_id": clientID},
+		Content: gin.H{"message": "欢迎使用WebSocket服务！", "id": id},
 		Time:    time.Now(),
 	}
 
 	if err := s.sendJsonMessage(client, welcomeMsg); err != nil {
 		global.Logger.Error("发送欢迎消息失败",
 			zap.Error(err),
-			zap.String("client_id", clientID))
+			zap.String("id", id))
 		return
 	}
 
@@ -96,7 +96,7 @@ func (s *WebSocketServer) HandleWebSocket(c *gin.Context) {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				global.Logger.Error("读取消息错误",
 					zap.Error(err),
-					zap.String("client_id", clientID))
+					zap.String("id", id))
 			}
 			break
 		}
@@ -110,13 +110,13 @@ func (s *WebSocketServer) HandleWebSocket(c *gin.Context) {
 			if err := s.handleTextMessage(client, data); err != nil {
 				global.Logger.Error("处理文本消息失败",
 					zap.Error(err),
-					zap.String("client_id", clientID))
+					zap.String("id", id))
 			}
 		case websocket.BinaryMessage:
 			if err := s.handleBinaryMessage(client, data); err != nil {
 				global.Logger.Error("处理二进制消息失败",
 					zap.Error(err),
-					zap.String("client_id", clientID))
+					zap.String("id", id))
 			}
 		}
 	}

@@ -55,7 +55,7 @@ func InitProjectRouter(r *gin.RouterGroup) {
 		// Compile routes
 		compile := project.Group("compile")
 		{
-			compile.POST("", v1.Compile)
+			compile.GET("run/:id", v1.Compile)
 			compile.POST("config", v1.SaveCompileConfig)
 			compile.GET("config/:id", v1.GetConfigByProjectId)
 		}
