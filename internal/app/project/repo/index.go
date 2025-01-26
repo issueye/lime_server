@@ -152,7 +152,6 @@ func PullCode(info *model.ProjectInfo, versionInfo model.VersionInfo) (*git.Repo
 		URL:               repoURL,
 		Progress:          os.Stdout,
 		RecurseSubmodules: git.DefaultSubmoduleRecursionDepth,
-		ReferenceName:     plumbing.NewRemoteReferenceName("origin", versionInfo.Hash),
 	}
 
 	if info.ProxyUrl != "" {
@@ -180,9 +179,7 @@ func Checkout(version model.VersionInfo, repo *git.Repository) error {
 		return err
 	}
 
-	err = wTree.Checkout(&git.CheckoutOptions{
-		Hash: plumbing.NewHash(version.Hash),
-	})
+	err = wTree.Checkout(&git.CheckoutOptions{Hash: plumbing.NewHash(version.Hash)})
 	if err != nil {
 		return err
 	}
