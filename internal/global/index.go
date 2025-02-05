@@ -3,7 +3,6 @@ package global
 import (
 	"io/fs"
 	"lime/pkg/logger"
-	"lime/pkg/store"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -17,7 +16,6 @@ var (
 	HttpServer *http.Server
 	DB         *gorm.DB
 	S_WEB      fs.FS
-	STORE      store.Store
 )
 
 const (

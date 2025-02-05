@@ -10,7 +10,6 @@ func RunServer(ctx context.Context) {
 	InitConfig()
 	InitLogger()
 	InitDB()
-	InitStore()
 	InitHttpServer(ctx)
 }
 

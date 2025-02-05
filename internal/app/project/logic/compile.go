@@ -10,7 +10,6 @@ import (
 	"os/exec"
 
 	"github.com/dop251/goja"
-	"github.com/expr-lang/expr"
 )
 
 func SaveCompileConfig(req *requests.SaveCompileConfigRequest) error {
@@ -64,6 +63,14 @@ func CompileProject(projectId uint, versionId uint) error {
 }
 
 func CompileProgram(projectInfo model.ProjectInfo, versionInfo model.VersionInfo, info model.CompileInfo) error {
+	// 获取输出文件名称
+	output, err := GetOutfileName(projectInfo, versionInfo, info)
+	if err != nil {
+		return fmt.Errorf("获取输出文件名称失败: %v", err)
+	}
+
+	fmt.Println("输出路径:", output)
+
 	// 拉取代码到临时目录
 	gitRepo, err := repo.PullCode(&projectInfo, versionInfo)
 	if err != nil {
@@ -87,29 +94,8 @@ func CompileProgram(projectInfo model.ProjectInfo, versionInfo model.VersionInfo
 		return fmt.Errorf("执行脚本失败: %v", err)
 	}
 
-	// 注入编译信息
-	inject := map[string]any{
-		"project": projectInfo,
-		"version": versionInfo,
-		"compile": info,
-		"println": fmt.Println,
-	}
-
-	// 编译表达式获取输出路径
-	program, err := expr.Compile(info.Output, expr.Env(inject))
-	if err != nil {
-		return fmt.Errorf("编译输出路径表达式失败: %v", err)
-	}
-
-	output, err := expr.Run(program, inject)
-	if err != nil {
-		return fmt.Errorf("执行输出路径表达式失败: %v", err)
-	}
-
-	fmt.Println("输出路径:", output)
-
 	// 准备编译命令
-	args := []string{"build", "-o", output.(string)}
+	args := []string{"build", "-o", output}
 
 	// 设置编译标志
 	ldflags := info.Ldflags
@@ -131,7 +117,9 @@ func CompileProgram(projectInfo model.ProjectInfo, versionInfo model.VersionInfo
 		args = append(args, info.Flags...)
 	}
 
+	args = append(args, "main.go")
 	cmd := exec.Command("go", args...)
+	fmt.Println("编译命令: go", args)
 
 	// 设置工作目录到代码目录
 	cmd.Dir = workDir.Filesystem.Root()
@@ -141,10 +129,14 @@ func CompileProgram(projectInfo model.ProjectInfo, versionInfo model.VersionInfo
 		"GOOS="+info.Goos.String(),
 		"GOARCH="+info.Goarch.String(),
 	)
-	cmd.Env = env
 
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
+	cmd.Env = env
+	// 环境变量输出
+	fmt.Println("环境变量:", env)
+
+	writer := NewWriter()
+	cmd.Stdout = writer
+	cmd.Stderr = writer
 
 	return cmd.Run()
 }
