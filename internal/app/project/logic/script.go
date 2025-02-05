@@ -6,6 +6,8 @@ import (
 	"lime/internal/app/project/model"
 
 	"github.com/dop251/goja"
+	"github.com/mattn/anko/env"
+	"github.com/mattn/anko/vm"
 )
 
 type VM struct {
@@ -28,9 +30,7 @@ func NewVM(ctx context.Context) *VM {
 	return vm
 }
 
-// func ExoprtFunc
 func (v *VM) ExoprtFunc(name string, fn Fn) (goja.Callable, error) {
-	// 注册函数
 	if fn != nil {
 		err := fn(v.VM)
 		if err != nil {
@@ -38,13 +38,11 @@ func (v *VM) ExoprtFunc(name string, fn Fn) (goja.Callable, error) {
 		}
 	}
 
-	// 运行脚本
 	_, err := v.VM.RunString(v.CodeContent)
 	if err != nil {
 		return nil, err
 	}
 
-	// 导出函数
 	callFn, ok := goja.AssertFunction(v.VM.Get(name))
 	if !ok {
 		return nil, fmt.Errorf("function %s not found", name)
@@ -54,7 +52,6 @@ func (v *VM) ExoprtFunc(name string, fn Fn) (goja.Callable, error) {
 }
 
 func (v *VM) injectNative() {
-	// 注入console.log
 	console := map[string]interface{}{
 		"log": func(call goja.FunctionCall) goja.Value {
 			args := make([]interface{}, len(call.Arguments))
@@ -70,7 +67,6 @@ func (v *VM) injectNative() {
 }
 
 func GetOutfileName(projectInfo model.ProjectInfo, versionInfo model.VersionInfo, info model.CompileInfo) (string, error) {
-	// 获取输出文件名称  执行 js 脚本获取输出文件名称
 	if info.Output == "" {
 		return "", fmt.Errorf("输出文件名称不能为空")
 	}
@@ -99,4 +95,21 @@ func GetOutfileName(projectInfo model.ProjectInfo, versionInfo model.VersionInfo
 	}
 
 	return res.String(), nil
+}
+
+func NewVM2(info model.CompileInfo) (interface{}, error) {
+	e := env.NewEnv()
+	e.Define("println", fmt.Println)
+	e.Define("data", info)
+
+	script := `
+	println("data -> ", data)
+	data.Output
+	`
+	data, err := vm.Execute(e, nil, script)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
 }
