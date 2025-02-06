@@ -14,6 +14,7 @@ require (
 	github.com/glebarez/sqlite v1.11.0
 	github.com/go-git/go-git/v5 v5.13.2
 	github.com/gorilla/websocket v1.5.3
+	github.com/mattn/anko v0.1.9
 	github.com/ncruces/go-sqlite3 v0.21.3
 	github.com/spf13/cast v1.7.1
 	github.com/swaggo/swag v1.16.4
@@ -67,7 +68,6 @@ require (
 	github.com/klauspost/cpuid/v2 v2.2.8 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
-	github.com/mattn/anko v0.1.9 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
