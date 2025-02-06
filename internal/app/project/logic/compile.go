@@ -90,9 +90,9 @@ func CompileProgram(projectInfo model.ProjectInfo, versionInfo model.VersionInfo
 	}
 
 	// 执行编译前的JavaScript脚本
-	if err := executeScripts(info.Scripts, info); err != nil {
-		return fmt.Errorf("执行脚本失败: %v", err)
-	}
+	// if err := executeScripts(info.Scripts, info); err != nil {
+	// 	return fmt.Errorf("执行脚本失败: %v", err)
+	// }
 
 	// 准备编译命令
 	args := []string{"build", "-o", output}
