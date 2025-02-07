@@ -3,8 +3,6 @@ package logic
 import (
 	"fmt"
 	"lime/internal/app/project/model"
-
-	"github.com/mattn/anko/vm"
 )
 
 // InvokeParams 执行参数
@@ -72,7 +70,7 @@ func runCode(params InvokeParams) (any, error) {
 	env.SetParams("compile", params.Compile)
 	env.SetParams("project", params.Project)
 	env.SetParams("version", params.Version)
-	data, err := vm.Execute(env.GetEnv(), nil, params.Code)
+	data, err := env.Execute(params.Code)
 	if err != nil {
 		return nil, err
 	}

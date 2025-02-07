@@ -3,3 +3,5 @@ bin/*
 *.dll
 
 web/assets/*
+
+vendor

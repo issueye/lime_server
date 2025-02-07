@@ -27,13 +27,9 @@ import (
 //go:embed web/*
 var webDir embed.FS
 
-var (
-	VERSION = "v1.0.0"
-)
-
 func showVersion() {
 	versionInfo := config.GetVersionInfo()
-	fmt.Printf("Version: %s\n", VERSION)
+	fmt.Printf("Version: %s\n", global.VERSION)
 	fmt.Printf("Build Time: %s\n", versionInfo.BuildTime)
 	fmt.Printf("Git Commit: %s\n", versionInfo.GitCommit)
 	fmt.Printf("Environment: %s\n", versionInfo.Environment)

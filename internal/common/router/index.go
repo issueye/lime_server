@@ -36,9 +36,10 @@ func InitRouter(r *gin.Engine) {
 		adminRouter.Register(v1)
 		// 注册项目管理路由
 		projectRouter.Register(v1)
-		// websocket
-		v1.GET("/ws", websocket.GetWebSocketManager().HandleWebSocket)
 	}
+
+	// websocket
+	r.GET("/ws_compile", websocket.GetWebSocketManager().HandleWebSocket)
 
 	r.NoRoute(func(ctx *gin.Context) {
 		global.Logger.Logger.Error("404", zap.String("path", ctx.Request.URL.Path), zap.String("method", ctx.Request.Method))

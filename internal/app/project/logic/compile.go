@@ -6,6 +6,7 @@ import (
 	"lime/internal/app/project/repo"
 	"lime/internal/app/project/requests"
 	"lime/internal/app/project/service"
+	"lime/internal/app/websocket"
 	"os"
 	"os/exec"
 )
@@ -62,6 +63,7 @@ func CompileProject(projectId uint, versionId uint) error {
 
 func CompileProgram(projectInfo model.ProjectInfo, versionInfo model.VersionInfo, info model.CompileInfo) error {
 	// 获取输出文件名称
+	SendMessage(versionInfo, "获取输出文件名称")
 	output, err := GetOutfileName(
 		InvokeParams{
 			Code:    info.Output,
@@ -71,33 +73,37 @@ func CompileProgram(projectInfo model.ProjectInfo, versionInfo model.VersionInfo
 		},
 	)
 	if err != nil {
+		SendMessage(versionInfo, fmt.Sprintf("获取输出文件名称失败: %v", err))
 		return fmt.Errorf("获取输出文件名称失败: %v", err)
 	}
 
-	fmt.Println("输出路径:", output)
+	SendMessage(versionInfo, fmt.Sprintf("输出文件名称: %s", output))
 
+	SendMessage(versionInfo, "拉取代码到临时目录")
 	// 拉取代码到临时目录
 	gitRepo, err := repo.PullCode(&projectInfo, versionInfo)
 	if err != nil {
+		SendMessage(versionInfo, fmt.Sprintf("拉取代码失败: %v", err))
 		return fmt.Errorf("拉取代码失败: %v", err)
 	}
 
 	// checkout 到指定版本
-	fmt.Println("切换代码版本:", versionInfo.Version)
+	SendMessage(versionInfo, fmt.Sprintf("切换代码版本: %s  -hash:%s", versionInfo.Version, versionInfo.Hash))
 	err = repo.Checkout(versionInfo, gitRepo)
 	if err != nil {
+		SendMessage(versionInfo, fmt.Sprintf("切换代码版本失败: %v", err))
 		return fmt.Errorf("切换代码版本失败: %v", err)
 	}
 
 	// 获取仓库工作目录
-	fmt.Println("获取工作目录")
 	workDir, err := gitRepo.Worktree()
 	if err != nil {
+		SendMessage(versionInfo, fmt.Sprintf("获取工作目录失败: %v", err))
 		return fmt.Errorf("获取工作目录失败: %v", err)
 	}
 
 	// 执行编译前的脚本
-	fmt.Println("执行编译前的脚本")
+	SendMessage(versionInfo, "执行编译前的脚本")
 	if err := executeScripts(
 		workDir.Filesystem.Root(),
 		info.BeforeScripts,
@@ -105,17 +111,19 @@ func CompileProgram(projectInfo model.ProjectInfo, versionInfo model.VersionInfo
 		versionInfo,
 		info,
 	); err != nil {
-		return fmt.Errorf("执行脚本失败: %v", err)
+		SendMessage(versionInfo, fmt.Sprintf("执行脚本失败: %v", err))
 	}
 
 	// 执行构建命令
+	SendMessage(versionInfo, "执行构建命令")
 	err = runCommand(output, workDir.Filesystem.Root(), info, projectInfo, versionInfo)
 	if err != nil {
+		SendMessage(versionInfo, fmt.Sprintf("构建命令失败: %v", err))
 		return fmt.Errorf("构建命令失败: %v", err)
 	}
 
 	// 执行编译后的脚本
-	fmt.Println("执行编译后的脚本")
+	SendMessage(versionInfo, "执行编译后的脚本")
 	if err := executeScripts(
 		workDir.Filesystem.Root(),
 		info.AfterScripts,
@@ -123,6 +131,7 @@ func CompileProgram(projectInfo model.ProjectInfo, versionInfo model.VersionInfo
 		versionInfo,
 		info,
 	); err != nil {
+		SendMessage(versionInfo, fmt.Sprintf("执行脚本失败: %v", err))
 		return fmt.Errorf("执行脚本失败: %v", err)
 	}
 
@@ -132,6 +141,7 @@ func CompileProgram(projectInfo model.ProjectInfo, versionInfo model.VersionInfo
 // executeScripts 执行编译前的JavaScript脚本
 func executeScripts(workDir string, scripts model.Scripts, projectInfo model.ProjectInfo, versionInfo model.VersionInfo, info model.CompileInfo) error {
 	for _, script := range scripts {
+		fmt.Println("脚本内容：", script.Content)
 		err := BeforeScript(
 			InvokeParams{
 				WorkDir: workDir,
@@ -162,7 +172,6 @@ func runCommand(output string, workDir string, info model.CompileInfo, projectIn
 				continue
 			}
 
-			fmt.Println("脚本内容：", env.Value)
 			// 获取环境变量的值
 			val, _ := InjectEnv(
 				InvokeParams{
@@ -173,7 +182,8 @@ func runCommand(output string, workDir string, info model.CompileInfo, projectIn
 				},
 			)
 
-			fmt.Println("注入变量:", env.Key, val)
+			// 注入环境变量
+			SendMessage(versionInfo, fmt.Sprintf("注入变量: %s=%s", env.Key, val))
 			if val == "" {
 				continue
 			}
@@ -196,24 +206,38 @@ func runCommand(output string, workDir string, info model.CompileInfo, projectIn
 
 	args = append(args, "main.go")
 	cmd := exec.Command("go", args...)
-	fmt.Println("编译命令: go", args)
+	SendMessage(versionInfo, fmt.Sprintf("编译命令: go %v", args))
 
 	// 设置工作目录到代码目录
 	cmd.Dir = workDir
 
 	// 设置环境变量
-	env := append(os.Environ(),
-		"GOOS="+info.Goos.String(),
-		"GOARCH="+info.Goarch.String(),
-	)
+	env := []string{
+		"GOOS=" + info.Goos.String(),
+		"GOARCH=" + info.Goarch.String(),
+	}
+
+	// 环境变量输出
+	SendMessage(versionInfo, fmt.Sprintf("环境变量: %v", env))
+	env = append(env, os.Environ()...)
 
 	cmd.Env = env
-	// 环境变量输出
-	fmt.Println("环境变量:", env)
 
-	writer := NewWriter()
+	writer := NewWriter(versionInfo)
 	cmd.Stdout = writer
 	cmd.Stderr = writer
 
-	return cmd.Run()
+	err := cmd.Run()
+	if err != nil {
+		SendMessage(versionInfo, fmt.Sprintf("运行失败: %s", writer.String()))
+		return err
+	}
+
+	SendMessage(versionInfo, fmt.Sprintf("运行成功: %s", writer.String()))
+	return nil
+}
+
+func SendMessage(versionInfo model.VersionInfo, msg string) {
+	connID := fmt.Sprintf("%d_%d", versionInfo.ID, versionInfo.ProjectId)
+	websocket.GetWebSocketManager().SendMessage(connID, []byte(msg), 1)
 }

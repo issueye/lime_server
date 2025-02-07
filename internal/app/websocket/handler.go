@@ -78,7 +78,7 @@ func (s *WebSocketServer) HandleWebSocket(c *gin.Context) {
 	// 发送欢迎消息
 	welcomeMsg := Message{
 		Type:    JsonMessage,
-		Content: gin.H{"message": "欢迎使用WebSocket服务！", "id": id},
+		Content: gin.H{"message": "欢迎使用WebSocket服务！", "id": connID},
 		Time:    time.Now(),
 	}
 
