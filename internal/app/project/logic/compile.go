@@ -8,8 +8,6 @@ import (
 	"lime/internal/app/project/service"
 	"os"
 	"os/exec"
-
-	"github.com/dop251/goja"
 )
 
 func SaveCompileConfig(req *requests.SaveCompileConfigRequest) error {
@@ -64,7 +62,14 @@ func CompileProject(projectId uint, versionId uint) error {
 
 func CompileProgram(projectInfo model.ProjectInfo, versionInfo model.VersionInfo, info model.CompileInfo) error {
 	// 获取输出文件名称
-	output, err := GetOutfileName(projectInfo, versionInfo, info)
+	output, err := GetOutfileName(
+		InvokeParams{
+			Code:    info.Output,
+			Project: projectInfo,
+			Version: versionInfo,
+			Compile: info,
+		},
+	)
 	if err != nil {
 		return fmt.Errorf("获取输出文件名称失败: %v", err)
 	}
@@ -78,22 +83,74 @@ func CompileProgram(projectInfo model.ProjectInfo, versionInfo model.VersionInfo
 	}
 
 	// checkout 到指定版本
+	fmt.Println("切换代码版本:", versionInfo.Version)
 	err = repo.Checkout(versionInfo, gitRepo)
 	if err != nil {
 		return fmt.Errorf("切换代码版本失败: %v", err)
 	}
 
 	// 获取仓库工作目录
+	fmt.Println("获取工作目录")
 	workDir, err := gitRepo.Worktree()
 	if err != nil {
 		return fmt.Errorf("获取工作目录失败: %v", err)
 	}
 
-	// 执行编译前的JavaScript脚本
-	// if err := executeScripts(info.Scripts, info); err != nil {
-	// 	return fmt.Errorf("执行脚本失败: %v", err)
-	// }
+	// 执行编译前的脚本
+	fmt.Println("执行编译前的脚本")
+	if err := executeScripts(
+		workDir.Filesystem.Root(),
+		info.BeforeScripts,
+		projectInfo,
+		versionInfo,
+		info,
+	); err != nil {
+		return fmt.Errorf("执行脚本失败: %v", err)
+	}
 
+	// 执行构建命令
+	err = runCommand(output, workDir.Filesystem.Root(), info, projectInfo, versionInfo)
+	if err != nil {
+		return fmt.Errorf("构建命令失败: %v", err)
+	}
+
+	// 执行编译后的脚本
+	fmt.Println("执行编译后的脚本")
+	if err := executeScripts(
+		workDir.Filesystem.Root(),
+		info.AfterScripts,
+		projectInfo,
+		versionInfo,
+		info,
+	); err != nil {
+		return fmt.Errorf("执行脚本失败: %v", err)
+	}
+
+	return nil
+}
+
+// executeScripts 执行编译前的JavaScript脚本
+func executeScripts(workDir string, scripts model.Scripts, projectInfo model.ProjectInfo, versionInfo model.VersionInfo, info model.CompileInfo) error {
+	for _, script := range scripts {
+		err := BeforeScript(
+			InvokeParams{
+				WorkDir: workDir,
+				Code:    script.Content,
+				Project: projectInfo,
+				Version: versionInfo,
+				Compile: info,
+			},
+		)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func runCommand(output string, workDir string, info model.CompileInfo, projectInfo model.ProjectInfo, versionInfo model.VersionInfo) error {
 	// 准备编译命令
 	args := []string{"build", "-o", output}
 
@@ -101,7 +158,27 @@ func CompileProgram(projectInfo model.ProjectInfo, versionInfo model.VersionInfo
 	ldflags := info.Ldflags
 	if len(info.EnvVars) > 0 {
 		for _, env := range info.EnvVars {
-			ldflags += fmt.Sprintf(" -X %s=%s", env.Key, env.Value)
+			if env.Key == "" || env.Value == "" {
+				continue
+			}
+
+			fmt.Println("脚本内容：", env.Value)
+			// 获取环境变量的值
+			val, _ := InjectEnv(
+				InvokeParams{
+					Code:    env.Value,
+					Project: projectInfo,
+					Version: versionInfo,
+					Compile: info,
+				},
+			)
+
+			fmt.Println("注入变量:", env.Key, val)
+			if val == "" {
+				continue
+			}
+
+			ldflags += fmt.Sprintf(" -X %s=%s", env.Key, val)
 		}
 	}
 
@@ -122,7 +199,7 @@ func CompileProgram(projectInfo model.ProjectInfo, versionInfo model.VersionInfo
 	fmt.Println("编译命令: go", args)
 
 	// 设置工作目录到代码目录
-	cmd.Dir = workDir.Filesystem.Root()
+	cmd.Dir = workDir
 
 	// 设置环境变量
 	env := append(os.Environ(),
@@ -139,54 +216,4 @@ func CompileProgram(projectInfo model.ProjectInfo, versionInfo model.VersionInfo
 	cmd.Stderr = writer
 
 	return cmd.Run()
-}
-
-// executeScripts 执行编译前的JavaScript脚本
-func executeScripts(scripts []model.Script, info model.CompileInfo) error {
-	vm := goja.New()
-
-	// 注入编译信息到JS环境
-	compileInfo := map[string]interface{}{
-		"output":  info.Output,
-		"goos":    info.Goos,
-		"goarch":  info.Goarch,
-		"flags":   info.Flags,
-		"ldflags": info.Ldflags,
-		"tags":    info.Tags,
-		"envVars": info.EnvVars,
-	}
-	err := vm.Set("compileInfo", compileInfo)
-	if err != nil {
-		return fmt.Errorf("设置编译信息到JS环境失败: %v", err)
-	}
-
-	// 注入console.log
-	console := map[string]interface{}{
-		"log": func(call goja.FunctionCall) goja.Value {
-			args := make([]interface{}, len(call.Arguments))
-			for i, arg := range call.Arguments {
-				args[i] = arg.Export()
-			}
-			fmt.Println(args...)
-			return goja.Undefined()
-		},
-	}
-
-	err = vm.Set("console", console)
-	if err != nil {
-		return fmt.Errorf("设置console到JS环境失败: %v", err)
-	}
-
-	// 执行每个脚本
-	for i, script := range scripts {
-		fmt.Printf("执行脚本 #%d: %s\n", i+1, script.Name)
-		_, err := vm.RunString(script.Content)
-		if err != nil {
-			return fmt.Errorf("执行脚本 #%d 失败: %v", i+1, err)
-		}
-
-		fmt.Printf("脚本 #%d 执行完毕\n", i+1)
-	}
-
-	return nil
 }
