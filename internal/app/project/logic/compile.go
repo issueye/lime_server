@@ -135,6 +135,8 @@ func CompileProgram(projectInfo model.ProjectInfo, versionInfo model.VersionInfo
 		return fmt.Errorf("执行脚本失败: %v", err)
 	}
 
+	SendMessage(versionInfo, "编译完成")
+
 	return nil
 }
 
