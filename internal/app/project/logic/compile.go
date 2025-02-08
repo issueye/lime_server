@@ -143,7 +143,7 @@ func CompileProgram(projectInfo model.ProjectInfo, versionInfo model.VersionInfo
 // executeScripts 执行编译前的JavaScript脚本
 func executeScripts(workDir string, scripts model.Scripts, projectInfo model.ProjectInfo, versionInfo model.VersionInfo, info model.CompileInfo) error {
 	for _, script := range scripts {
-		fmt.Println("脚本内容：", script.Content)
+		SendMessage(versionInfo, fmt.Sprintf("执行脚本: %s", script.Name))
 		err := BeforeScript(
 			InvokeParams{
 				WorkDir: workDir,
@@ -217,6 +217,17 @@ func runCommand(output string, workDir string, info model.CompileInfo, projectIn
 	env := []string{
 		"GOOS=" + info.Goos.String(),
 		"GOARCH=" + info.Goarch.String(),
+	}
+
+	// 注入运行期环境变量
+	if len(info.OsEnvVars) > 0 {
+		for _, data := range info.OsEnvVars {
+			if data.Key == "" || data.Value == "" {
+				continue
+			}
+
+			env = append(env, fmt.Sprintf("%s=%s", data.Key, data.Value))
+		}
 	}
 
 	// 环境变量输出

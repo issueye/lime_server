@@ -20,6 +20,7 @@ type CompileBase struct {
 	BeforeScripts Scripts   `gorm:"column:before_scripts;size:-1;comment:编译前执行的脚本;" json:"before_scripts"` // 编译前执行的脚本
 	AfterScripts  Scripts   `gorm:"column:after_scripts;size:-1;comment:编译后执行的脚本;" json:"after_scripts"`   // 编译前执行的脚本
 	EnvVars       model.KVS `gorm:"column:env_vars;size:-1;comment:编译期注入变量;" json:"env_vars"`              // 编译期注入变量 追加到链接标志中
+	OsEnvVars     model.KVS `gorm:"column:os_env_vars;size:-1;comment:运行期注入变量;" json:"os_env_vars"`        // 运行期注入变量 追加到环境变量中
 }
 
 func (CompileInfo) TableName() string {

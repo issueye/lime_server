@@ -1,6 +1,6 @@
 module lime
 
-go 1.23.2
+go 1.22.8
 
 require (
 	github.com/TelenLiu/knife4j_go v0.0.0-20240804141701-0553d9be201d
@@ -18,6 +18,8 @@ require (
 	github.com/ncruces/go-sqlite3 v0.21.3
 	github.com/spf13/cast v1.7.1
 	github.com/swaggo/swag v1.16.4
+	github.com/tidwall/gjson v1.18.0
+	github.com/tidwall/sjson v1.2.5
 	github.com/ying32/govcl v2.2.3+incompatible
 	go.uber.org/zap v1.27.0
 	golang.org/x/crypto v0.32.0
@@ -79,10 +81,8 @@ require (
 	github.com/sergi/go-diff v1.3.2-0.20230802210424-5b0b94c5c0d3 // indirect
 	github.com/skeema/knownhosts v1.3.0 // indirect
 	github.com/tetratelabs/wazero v1.8.2 // indirect
-	github.com/tidwall/gjson v1.18.0 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect
-	github.com/tidwall/sjson v1.2.5 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
