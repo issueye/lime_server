@@ -53,11 +53,35 @@ func (a *Anko) GetParams(name string) any {
 
 func (a *Anko) InjectFunc() {
 	// 注入方法
-	a.env.Define("println", a.Println)            // 输出到控制台
-	a.env.Define("runCommand", a.RunCommand)      // 运行命令行命令
-	a.env.Define("env", os.Getenv)                // 获取环境变量
+	a.env.Define("println", a.Println)       // 输出到控制台
+	a.env.Define("runCommand", a.RunCommand) // 运行命令行命令
+	a.env.Define("env", os.Getenv)           // 获取环境变量
+	// a.env.Define("Json", NewJson)                 // 新建Json对象
+	// a.env.Define("JsonFromFile", NewJsonFromFile) // 新建Json对象
+
+	// 注入 Json 相关函数和方法
 	a.env.Define("Json", NewJson)                 // 新建Json对象
-	a.env.Define("JsonFromFile", NewJsonFromFile) // 新建Json对象
+	a.env.Define("JsonFromFile", NewJsonFromFile) // 从文件新建Json对象
+
+	// 注册 Json 类型和方法
+	err := a.env.DefineType("Json", &Json{})
+	if err != nil {
+		panic(err)
+	}
+
+	// 注入 Json 结构体的所有方法
+	a.env.Define("GetString", (*Json).GetString)
+	a.env.Define("GetInt", (*Json).GetInt)
+	a.env.Define("GetBool", (*Json).GetBool)
+	a.env.Define("GetFloat", (*Json).GetFloat)
+	a.env.Define("GetStrings", (*Json).GetStrings)
+	a.env.Define("GetInts", (*Json).GetInts)
+	a.env.Define("GetBools", (*Json).GetBools)
+	a.env.Define("GetFloats", (*Json).GetFloats)
+	a.env.Define("Set", (*Json).Set)
+	a.env.Define("Delete", (*Json).Delete)
+	a.env.Define("ToString", (*Json).String)
+	a.env.Define("Save", (*Json).Save)
 }
 
 // 注入变量
@@ -187,13 +211,23 @@ func (j *Json) GetFloats(path string) []float64 {
 }
 
 func (j *Json) String() string {
-	return j.Getter.String()
+	return j.data
 }
 
 func (j *Json) Set(path string, value any) {
-	sjson.Set(j.data, path, value)
+	resData, err := sjson.Set(j.data, path, value)
+	if err != nil {
+		return
+	}
+
+	j.data = resData
 }
 
 func (j *Json) Delete(path string) {
 	sjson.Delete(j.data, path)
+}
+
+func (j *Json) Save(file string) error {
+	// 覆盖写入
+	return os.WriteFile(file, []byte(j.data), 0644)
 }
