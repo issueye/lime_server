@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"encoding/json"
 	"fmt"
 	"lime/internal/app/project/model"
 	"lime/internal/app/project/repo"
@@ -9,6 +10,7 @@ import (
 	"lime/internal/app/websocket"
 	"os"
 	"os/exec"
+	"time"
 )
 
 func SaveCompileConfig(req *requests.SaveCompileConfigRequest) error {
@@ -252,5 +254,17 @@ func runCommand(output string, workDir string, info model.CompileInfo, projectIn
 
 func SendMessage(versionInfo model.VersionInfo, msg string) {
 	connID := fmt.Sprintf("%d_%d", versionInfo.ID, versionInfo.ProjectId)
-	websocket.GetWebSocketManager().SendMessage(connID, []byte(msg), 1)
+
+	response := websocket.Message{
+		Type:    websocket.JsonMessage,
+		Content: msg,
+		Time:    time.Now(),
+	}
+
+	responseMsg, err := json.Marshal(response)
+	if err != nil {
+		return
+	}
+
+	websocket.GetWebSocketManager().SendMessage(connID, responseMsg, 1)
 }

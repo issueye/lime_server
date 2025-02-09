@@ -17,9 +17,10 @@ import (
 type MessageType int
 
 const (
-	TextMessage MessageType = iota + 1
-	JsonMessage
-	BinaryMessage
+	TextMessage      MessageType = iota + 1 // 文本消息
+	JsonMessage                             // JSON消息
+	BinaryMessage                           // 二进制消息
+	HeartbeatMessage                        // 心跳消息
 )
 
 // Message 定义WebSocket消息结构
@@ -167,7 +168,6 @@ func (s *WebSocketServer) handleJsonMessage(client *WebSocketClient, msg Message
 			Time: time.Now(),
 		}
 		return s.sendJsonMessage(client, response)
-
 	case JsonMessage:
 		// 处理JSON类型的消息
 		response := Message{
@@ -179,7 +179,14 @@ func (s *WebSocketServer) handleJsonMessage(client *WebSocketClient, msg Message
 			Time: time.Now(),
 		}
 		return s.sendJsonMessage(client, response)
-
+	case HeartbeatMessage:
+		// 处理心跳消息，直接回复一个心跳响应
+		response := Message{
+			Type:    HeartbeatMessage,
+			Content: "心跳响应",
+			Time:    time.Now(),
+		}
+		return s.sendJsonMessage(client, response)
 	default:
 		return fmt.Errorf("不支持的消息类型: %d", msg.Type)
 	}
