@@ -12,12 +12,12 @@ import (
 )
 
 const (
-	// 心跳间隔时间
-	heartbeatInterval = 30 * time.Second
-	// 写入超时时间
-	writeTimeout = 10 * time.Second
-	// 读取超时时间
-	readTimeout = 60 * time.Second
+	// 心跳间隔时间，从30秒改为5分钟
+	heartbeatInterval = 5 * time.Minute
+	// 写入超时时间，从10秒改为2分钟
+	writeTimeout = 2 * time.Minute
+	// 读取超时时间，从1分钟改为10分钟
+	readTimeout = 10 * time.Minute
 )
 
 // 单例模式
@@ -168,13 +168,15 @@ func (s *WebSocketServer) sendMessageToClient(client *WebSocketClient, message [
 
 // periodicCleanup 定期清理不活跃的连接
 func (s *WebSocketServer) periodicCleanup() {
-	ticker := time.NewTicker(5 * time.Minute)
+	// 清理检查间隔从5分钟改为15分钟
+	ticker := time.NewTicker(15 * time.Minute)
 	defer ticker.Stop()
 
 	for {
 		select {
 		case <-ticker.C:
-			s.CleanInactiveClients(10 * time.Minute)
+			// 不活跃超时时间从10分钟改为30分钟
+			s.CleanInactiveClients(30 * time.Minute)
 		case <-s.shutdownCh:
 			return
 		}

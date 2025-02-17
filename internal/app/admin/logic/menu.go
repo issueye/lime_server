@@ -147,6 +147,7 @@ func InitMenus() {
 		model.BaseNewMenu(model.MenuBase{Code: "1000", Name: "项目管理", Description: "项目管理", Frontpath: "/project", Order: 20, Visible: true, Icon: "Folder", ParentCode: ""}),
 		model.BaseNewMenu(model.MenuBase{Code: "1001", Name: "项目", Description: "项目管理", Frontpath: "/project/index", Order: 20, Visible: true, Icon: "Folder", ParentCode: "1000"}),
 		model.BaseNewMenu(model.MenuBase{Code: "1002", Name: "版本管理", Description: "版本管理", Frontpath: "/project/version", Order: 21, Visible: true, Icon: "Clock", ParentCode: "1000"}),
+		model.BaseNewMenu(model.MenuBase{Code: "1003", Name: "文件下载", Description: "文件下载", Frontpath: "/project/filedown", Order: 22, Visible: true, Icon: "Down", ParentCode: "1000"}),
 
 		model.BaseNewMenu(model.MenuBase{Code: "9000", Name: "系统管理", Description: "系统管理", Frontpath: "/system", Order: 90, Visible: true, Icon: "Setting", ParentCode: ""}),
 		model.BaseNewMenu(model.MenuBase{Code: "9001", Name: "用户管理", Description: "用户管理", Frontpath: "/system/user", Order: 91, Visible: true, Icon: "User", ParentCode: "9000"}),

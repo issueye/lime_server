@@ -6,7 +6,6 @@ import (
 	"lime/internal/app/project/model"
 	"os"
 	"os/exec"
-	"strings"
 
 	"github.com/mattn/anko/env"
 	_ "github.com/mattn/anko/packages"
@@ -100,14 +99,14 @@ func (a *Anko) Execute(code string) (any, error) {
 }
 
 func (a *Anko) Println(args ...any) {
-	version, ok := a.params["version"]
+	_, ok := a.params["version"]
 	if ok {
 		msgs := make([]string, 0, len(args))
 		for _, arg := range args {
 			msgs = append(msgs, fmt.Sprint(arg))
 		}
 
-		SendMessage(version.(model.VersionInfo), strings.Join(msgs, " "))
+		// SendMessage(version.(model.VersionInfo), strings.Join(msgs, " "))
 	}
 
 	fmt.Println(args...)

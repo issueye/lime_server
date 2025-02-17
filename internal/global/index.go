@@ -4,6 +4,7 @@ import (
 	"io/fs"
 	"lime/pkg/logger"
 	"net/http"
+	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -23,6 +24,13 @@ const (
 	ROOT_PATH         = "root"
 	DEFAULT_PWD       = "123456"
 	DB_Key            = "data_base:info"
+)
+
+var (
+	STATIC_PATH = filepath.Join(ROOT_PATH, "static")
+	TMP_PATH    = filepath.Join(ROOT_PATH, "tmp")
+	PKG_PATH    = filepath.Join(ROOT_PATH, "packages")
+	DATA_PATH   = filepath.Join(ROOT_PATH, "data")
 )
 
 func WriteLog(msg string) {

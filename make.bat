@@ -1,0 +1,1 @@
+go build -o bin/lime.v1.0.0.1-beta.exe -ldflags="-w -s -H windowsgui -X lime/internal/global.VERSION=v1.0.0.2-beta" -tags=tempdll -trimpath main.go

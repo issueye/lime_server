@@ -59,5 +59,13 @@ func InitProjectRouter(r *gin.RouterGroup) {
 			compile.POST("config", v1.SaveCompileConfig)
 			compile.GET("config/:id", v1.GetConfigByProjectId)
 		}
+
+		// Package routes
+		pkg := project.Group("package")
+		{
+			pkg.DELETE(":id", v1.DeletePackage)
+			pkg.POST("list", v1.PackageList)
+			pkg.POST("download/:id", v1.DownloadPackage)
+		}
 	}
 }

@@ -15,7 +15,7 @@ type Writer struct {
 func (w *Writer) Write(p []byte) (n int, err error) {
 	fmt.Println("写入内容: ", string(p))
 	if w.Version.ID != 0 {
-		SendMessage(w.Version, string(p))
+		// SendMessage(w.Version, string(p))
 	}
 
 	return w.buffer.Write(p)
