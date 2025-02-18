@@ -238,12 +238,14 @@ func (c *Compiler) savePackage() error {
 
 	pkg := &model.PackageInfo{
 		PackageBase: model.PackageBase{
-			ProjectId: c.projectInfo.ID,
-			VersionId: c.versionInfo.ID,
-			Name:      c.output,
-			Path:      newPath,
-			Size:      fileInfo.Size(),
-			Hash:      hash,
+			ProjectName: c.projectInfo.Name,
+			ProjectId:   c.projectInfo.ID,
+			Version:     c.versionInfo.Version,
+			VersionId:   c.versionInfo.ID,
+			Name:        fileBase,
+			Path:        newPath,
+			Size:        fileInfo.Size(),
+			Hash:        hash,
 		},
 	}
 

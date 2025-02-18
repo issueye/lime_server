@@ -13,7 +13,6 @@ func Register(r *gin.RouterGroup) {
 func InitProjectRouter(r *gin.RouterGroup) {
 	project := r.Group("project")
 	// project.Use(middleware.AuthMiddleware())
-
 	{
 		project.GET(":id", v1.GetProject)
 		project.POST("list", v1.ProjectList)
