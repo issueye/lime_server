@@ -164,14 +164,14 @@ func CreateMenu(c *gin.Context) {
 func UpdateMenu(c *gin.Context) {
 	ctl := controller.New(c)
 
-	condition := requests.NewUpdateMenu()
-	err := ctl.Bind(condition)
+	menu := requests.NewUpdateMenu()
+	err := ctl.Bind(menu)
 	if err != nil {
 		ctl.FailWithError(err)
 		return
 	}
 
-	err = logic.UpdateMenu(condition)
+	err = logic.UpdateMenu(menu)
 	if err != nil {
 		ctl.FailWithError(err)
 	}

@@ -324,7 +324,7 @@ func (c *Compiler) runCommand() error {
 		args = append(args, c.compileInfo.Flags...)
 	}
 
-	args = append(args, "main.go")
+	args = append(args, c.compileInfo.MainPath)
 	cmd := exec.Command("go", args...)
 	c.sendMessagef("编译命令: go %v", args)
 

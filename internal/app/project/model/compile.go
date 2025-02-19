@@ -21,8 +21,7 @@ type CompileBase struct {
 	AfterScripts  Scripts   `gorm:"column:after_scripts;size:-1;comment:编译后执行的脚本;" json:"after_scripts"`   // 编译前执行的脚本
 	EnvVars       model.KVS `gorm:"column:env_vars;size:-1;comment:编译期注入变量;" json:"env_vars"`              // 编译期注入变量 追加到链接标志中
 	OsEnvVars     model.KVS `gorm:"column:os_env_vars;size:-1;comment:运行期注入变量;" json:"os_env_vars"`        // 运行期注入变量 追加到环境变量中
+	MainPath      string    `gorm:"column:main_path;size:-1;comment:主包路径;" json:"main_path"`               // 主包路径
 }
 
-func (CompileInfo) TableName() string {
-	return "project_compile_info"
-}
+func (CompileInfo) TableName() string { return "biz_project_compile_info" }

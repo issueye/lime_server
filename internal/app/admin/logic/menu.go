@@ -59,10 +59,10 @@ func UpdateMenu(r *requests.UpdateMenu) error {
 	data["name"] = r.Name
 	data["description"] = r.Description
 	data["frontpath"] = r.Frontpath
-	data["condition"] = r.Condition
+	// data["condition"] = r.Condition
 	data["order"] = r.Order
 	data["icon"] = r.Icon
-	data["method"] = r.Method
+	// data["method"] = r.Method
 	data["parent_code"] = r.ParentCode
 	data["visible"] = true
 
@@ -146,7 +146,6 @@ func InitMenus() {
 	menus := []*model.Menu{
 		model.BaseNewMenu(model.MenuBase{Code: "1000", Name: "项目管理", Description: "项目管理", Frontpath: "/project", Order: 20, Visible: true, Icon: "Folder", ParentCode: ""}),
 		model.BaseNewMenu(model.MenuBase{Code: "1001", Name: "项目", Description: "项目管理", Frontpath: "/project/index", Order: 20, Visible: true, Icon: "Folder", ParentCode: "1000"}),
-		model.BaseNewMenu(model.MenuBase{Code: "1002", Name: "版本管理", Description: "版本管理", Frontpath: "/project/version", Order: 21, Visible: true, Icon: "Clock", ParentCode: "1000"}),
 		model.BaseNewMenu(model.MenuBase{Code: "1003", Name: "文件下载", Description: "文件下载", Frontpath: "/project/filedown", Order: 22, Visible: true, Icon: "Down", ParentCode: "1000"}),
 
 		model.BaseNewMenu(model.MenuBase{Code: "9000", Name: "系统管理", Description: "系统管理", Frontpath: "/system", Order: 90, Visible: true, Icon: "Setting", ParentCode: ""}),

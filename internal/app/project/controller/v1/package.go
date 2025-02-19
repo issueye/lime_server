@@ -101,11 +101,15 @@ func DownloadPackage(c *gin.Context) {
 		return
 	}
 
-	path, err := logic.DownloadPackage(uint(i))
+	pkg, err := logic.DownloadPackage(uint(i))
 	if err != nil {
 		ctl.FailWithError(err)
 		return
 	}
 
-	c.File(path)
+	c.Header("Content-Description", "File Transfer")
+	c.Header("Content-Disposition", "attachment; filename="+pkg.Name)
+	c.Header("Content-Type", "application/octet-stream")
+
+	c.File(pkg.Path)
 }

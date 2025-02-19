@@ -64,7 +64,7 @@ func InitProjectRouter(r *gin.RouterGroup) {
 		{
 			pkg.DELETE(":id", v1.DeletePackage)
 			pkg.POST("list", v1.PackageList)
-			pkg.POST("download/:id", v1.DownloadPackage)
+			pkg.GET("download/:id", v1.DownloadPackage)
 		}
 	}
 }

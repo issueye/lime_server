@@ -34,12 +34,12 @@ func PackageList(condition *commonModel.PageQuery[*requests.QueryPackage]) (*com
 	return service.NewPackage().ListPackage(condition)
 }
 
-func DownloadPackage(id uint) (string, error) {
+func DownloadPackage(id uint) (*model.PackageInfo, error) {
 	srv := service.NewPackage()
 
 	info, err := srv.GetById(id)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	// 更新下载信息
@@ -47,8 +47,8 @@ func DownloadPackage(id uint) (string, error) {
 	info.LastDownload = time.Now()
 
 	if err := srv.Update(id, info); err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return info.Path, nil
+	return info, nil
 }

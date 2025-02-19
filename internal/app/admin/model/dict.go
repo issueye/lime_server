@@ -7,14 +7,23 @@ type DictsInfo struct {
 	DictsBase
 }
 
+type ContentType int
+
+const (
+	ContentTypeJson       ContentType = 1 // json
+	ContentTypeText       ContentType = 2 // text
+	ContentTypeAnkoScript ContentType = 3 // anko脚本
+)
+
 type DictsBase struct {
-	Code    string       `gorm:"column:code;size:200;not null;comment:菜单编码;" json:"code"`   // 菜单编码
-	Name    string       `gorm:"column:name;size:200;not null;comment:菜单名称;" json:"name"`   // 菜单名称
-	Remark  string       `gorm:"column:remark;size:255;not null;comment:备注;" json:"remark"` // 备注
-	Details []DictDetail `gorm:"foreignKey:DictCode;references:code;" json:"details"`       // 字典详情
+	Code        string       `gorm:"column:code;size:200;not null;comment:编码;" json:"code"`          // 编码
+	Name        string       `gorm:"column:name;size:200;not null;comment:名称;" json:"name"`          // 名称
+	ContentType ContentType  `gorm:"column:content_type;not null;comment:内容类型;" json:"content_type"` // 内容类型
+	Remark      string       `gorm:"column:remark;size:255;not null;comment:备注;" json:"remark"`      // 备注
+	Details     []DictDetail `gorm:"foreignKey:DictCode;references:code;" json:"details"`            // 字典详情
 }
 
-func (d DictsInfo) TableName() string { return "dicts_info" }
+func (d DictsInfo) TableName() string { return "sys_dict_info" }
 
 type DictDetail struct {
 	model.BaseModel
@@ -28,4 +37,4 @@ type DictDetailBase struct {
 	Remark   string `gorm:"column:remark;size:255;not null;comment:备注;" json:"remark"`         // 备注
 }
 
-func (d DictDetail) TableName() string { return "dict_detail" }
+func (d DictDetail) TableName() string { return "sys_dict_detail" }

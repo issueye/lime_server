@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"fmt"
 	"lime/internal/app/admin/model"
 	"lime/internal/app/admin/requests"
 	"lime/internal/app/admin/service"
@@ -13,6 +14,7 @@ func CreateDicts(req *requests.CreateDicts) error {
 }
 
 func UpdateDicts(req *requests.UpdateDicts) error {
+	fmt.Println("UpdateDicts -> ", req)
 	return service.NewDicts().Update(req.ID, &req.DictsInfo)
 }
 
