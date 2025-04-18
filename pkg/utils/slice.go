@@ -29,3 +29,47 @@ func SlicePage(page, pageSize, nums int) (sliceStart, sliceEnd int) {
 	}
 	return sliceStart, sliceEnd
 }
+
+// Unique 切片去重泛型函数
+func Unique[T comparable](slice []T) []T {
+	unique := make([]T, 0, len(slice))
+	seen := make(map[T]struct{}, len(slice))
+
+	for _, v := range slice {
+		if _, ok := seen[v]; !ok {
+			seen[v] = struct{}{}
+			unique = append(unique, v)
+		}
+	}
+
+	return unique
+}
+
+func UniqueInOrder[T comparable](slice []T) []T {
+	unique := make([]T, 0, len(slice))
+	seen := make(map[T]struct{}, len(slice))
+
+	for _, v := range slice {
+		if _, ok := seen[v]; !ok {
+			seen[v] = struct{}{}
+			unique = append(unique, v)
+		}
+	}
+
+	return unique
+}
+
+func UniqueWithFunc[T any, K comparable](slice []T, keyFunc func(T) K) []T {
+	unique := make([]T, 0, len(slice))
+	seen := make(map[K]struct{}, len(slice))
+
+	for _, v := range slice {
+		key := keyFunc(v)
+		if _, ok := seen[key]; !ok {
+			seen[key] = struct{}{}
+			unique = append(unique, v)
+		}
+	}
+
+	return unique
+}

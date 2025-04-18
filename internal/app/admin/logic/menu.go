@@ -7,6 +7,7 @@ import (
 	"lime/internal/app/admin/service"
 	commonModel "lime/internal/common/model"
 	"lime/internal/global"
+	"lime/pkg/utils"
 )
 
 func SaveRoleMenus(code string, menu_codes []string) error {
@@ -59,12 +60,11 @@ func UpdateMenu(r *requests.UpdateMenu) error {
 	data["name"] = r.Name
 	data["description"] = r.Description
 	data["frontpath"] = r.Frontpath
-	// data["condition"] = r.Condition
 	data["order"] = r.Order
 	data["icon"] = r.Icon
-	// data["method"] = r.Method
 	data["parent_code"] = r.ParentCode
 	data["visible"] = true
+	data["menu_type"] = r.MenuType
 
 	return service.NewMenu().UpdateByMap(uint(r.Id), data)
 }
@@ -80,12 +80,29 @@ func GetCatalog() ([]*model.Menu, error) {
 
 // 根据条件查询数据
 func ListMenu(condition *commonModel.PageQuery[*requests.QueryMenu]) (*commonModel.ResPage[model.Menu], error) {
-	res, err := service.NewMenu().ListMenu(condition)
+	srv := service.NewMenu()
+	res, err := srv.ListMenu(condition)
 	if err != nil {
 		return nil, err
 	}
 
-	res.List = MakeTree(res.List)
+	// 重新根据所有的父级菜单和子集菜单的标识码进行查询
+	codes := make([]string, 0)
+	for _, menu := range res.List {
+		codes = append(codes, menu.Code)
+		if menu.ParentCode != "" {
+			codes = append(codes, menu.ParentCode)
+		}
+	}
+
+	// 将切片去重
+	codes = utils.Unique(codes)
+	resList, err := srv.GetMenuByCodes(codes)
+	if err != nil {
+		return nil, err
+	}
+
+	res.List = MakeTree(resList)
 	return res, nil
 }
 
@@ -144,16 +161,12 @@ func MakeTree(list []*model.Menu) []*model.Menu {
 
 func InitMenus() {
 	menus := []*model.Menu{
-		model.BaseNewMenu(model.MenuBase{Code: "1000", Name: "项目管理", Description: "项目管理", Frontpath: "/project", Order: 20, Visible: true, Icon: "Folder", ParentCode: ""}),
-		model.BaseNewMenu(model.MenuBase{Code: "1001", Name: "项目", Description: "项目管理", Frontpath: "/project/index", Order: 20, Visible: true, Icon: "Folder", ParentCode: "1000"}),
-		model.BaseNewMenu(model.MenuBase{Code: "1003", Name: "文件下载", Description: "文件下载", Frontpath: "/project/filedown", Order: 22, Visible: true, Icon: "Down", ParentCode: "1000"}),
-
-		model.BaseNewMenu(model.MenuBase{Code: "9000", Name: "系统管理", Description: "系统管理", Frontpath: "/system", Order: 90, Visible: true, Icon: "Setting", ParentCode: ""}),
-		model.BaseNewMenu(model.MenuBase{Code: "9001", Name: "用户管理", Description: "用户管理", Frontpath: "/system/user", Order: 91, Visible: true, Icon: "User", ParentCode: "9000"}),
-		model.BaseNewMenu(model.MenuBase{Code: "9002", Name: "角色管理", Description: "角色管理", Frontpath: "/system/role", Order: 92, Visible: true, Icon: "Avatar", ParentCode: "9000"}),
-		model.BaseNewMenu(model.MenuBase{Code: "9003", Name: "菜单管理", Description: "菜单管理", Frontpath: "/system/menu", Order: 93, Visible: true, Icon: "Menu", ParentCode: "9000"}),
-		model.BaseNewMenu(model.MenuBase{Code: "9004", Name: "字典管理", Description: "字典管理", Frontpath: "/system/dict_mana", Order: 94, Visible: true, Icon: "List", ParentCode: "9000"}),
-		model.BaseNewMenu(model.MenuBase{Code: "9005", Name: "系统设置", Description: "系统设置", Frontpath: "/system/setting", Order: 95, Visible: true, Icon: "Tools", ParentCode: "9000"}),
+		model.BaseNewMenu(model.MenuBase{Code: "9000", Name: "系统管理", Description: "系统管理", Frontpath: "/system", Order: 90, Visible: true, Icon: "Setting", ParentCode: "", MenuType: model.EMT_DIRECTORY}),
+		model.BaseNewMenu(model.MenuBase{Code: "9001", Name: "用户管理", Description: "用户管理", Frontpath: "/system/user", Order: 91, Visible: true, Icon: "User", ParentCode: "9000", MenuType: model.EMT_MENU}),
+		model.BaseNewMenu(model.MenuBase{Code: "9002", Name: "角色管理", Description: "角色管理", Frontpath: "/system/role", Order: 92, Visible: true, Icon: "Avatar", ParentCode: "9000", MenuType: model.EMT_MENU}),
+		model.BaseNewMenu(model.MenuBase{Code: "9003", Name: "菜单管理", Description: "菜单管理", Frontpath: "/system/menu", Order: 93, Visible: true, Icon: "Menu", ParentCode: "9000", MenuType: model.EMT_MENU}),
+		model.BaseNewMenu(model.MenuBase{Code: "9004", Name: "字典管理", Description: "字典管理", Frontpath: "/system/dict_mana", Order: 94, Visible: true, Icon: "List", ParentCode: "9000", MenuType: model.EMT_MENU}),
+		model.BaseNewMenu(model.MenuBase{Code: "9005", Name: "系统设置", Description: "系统设置", Frontpath: "/system/setting", Order: 95, Visible: true, Icon: "Tools", ParentCode: "9000", MenuType: model.EMT_MENU}),
 	}
 
 	for _, menu := range menus {

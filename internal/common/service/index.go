@@ -101,7 +101,7 @@ func (b *BaseService[T]) GetByMap(conditions map[string]any) (*T, error) {
 	data := new(T)
 	qry := b.GetDB().Model(data)
 	for k, v := range conditions {
-		qry = qry.Where(k+" =?", v)
+		qry = qry.Where(k+" = ?", v)
 	}
 	err := qry.Find(data).Error
 	return data, err
@@ -120,7 +120,7 @@ func (b *BaseService[T]) GetDatasByMap(conditions map[string]any) ([]*T, error) 
 
 	qry := b.GetDB().Model(new(T))
 	for k, v := range conditions {
-		qry = qry.Where(k+" =?", v)
+		qry = qry.Where(k+" = ?", v)
 	}
 
 	err := qry.Find(&data).Error
@@ -139,7 +139,7 @@ func (b *BaseService[T]) UpdateByField(field string, value any, data map[string]
 func (b *BaseService[T]) UpdatedatasByMap(conditions map[string]any, data map[string]any) error {
 	srv := b.GetDB().Model(new(T))
 	for k, v := range conditions {
-		srv = srv.Where(k+" =?", v)
+		srv = srv.Where(k+" = ?", v)
 	}
 
 	return srv.Updates(data).Error
@@ -169,7 +169,7 @@ func (b *BaseService[T]) Delete(id uint) error {
 func (b *BaseService[T]) SaveByCondition(condition map[string]any, data T) error {
 	srv := b.GetDB().Model(new(T))
 	for k, v := range condition {
-		srv = srv.Where(k+" =?", v)
+		srv = srv.Where(k+" = ?", v)
 	}
 
 	return srv.Save(&data).Error

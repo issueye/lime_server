@@ -47,9 +47,17 @@ func (m *Menu) CheckMenuExist(menu *model.Menu) (bool, error) {
 func (m *Menu) ListMenu(condition *commonModel.PageQuery[*requests.QueryMenu]) (*commonModel.ResPage[model.Menu], error) {
 	return service.GetList[model.Menu](condition, func(qu *requests.QueryMenu, d *gorm.DB) *gorm.DB {
 		if qu.KeyWords != "" {
-			d = d.Where("name like ? or remark like ?", "%"+qu.KeyWords+"%", "%"+qu.KeyWords+"%")
+			d = d.Where("name like ? or description like ?", "%"+qu.KeyWords+"%", "%"+qu.KeyWords+"%")
 		}
 
 		return d
 	})
+}
+
+func (m *Menu) GetMenuByCodes(codes []string) ([]*model.Menu, error) {
+	list := make([]*model.Menu, 0)
+
+	qry := m.GetDB().Where("code in (?)", codes)
+	err := qry.Find(&list).Error
+	return list, err
 }
