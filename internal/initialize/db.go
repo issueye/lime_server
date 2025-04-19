@@ -33,7 +33,7 @@ func InitDATA(db *gorm.DB) {
 	logic.InitRoleMenus()
 	logic.InitUserRole()
 	logic.InitAdminUser()
-	logic.InitMenus()
+	logic.NewMenuLogic().InitMenus()
 }
 
 func FreeDB() {

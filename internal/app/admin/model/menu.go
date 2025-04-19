@@ -26,6 +26,7 @@ type MenuBase struct {
 	Visible     bool         `gorm:"column:visible;comment:是否可见;" json:"visible"`                    // 是否可见
 	ParentCode  string       `gorm:"column:parent_code;size:200;comment:父级菜单编码;" json:"parent_code"` // 父级菜单编码
 	MenuType    EnumMenuType `gorm:"column:menu_type;comment:菜单类型;" json:"menu_type"`                // 菜单类型
+	IsLink      uint         `gorm:"column:is_link;comment:是否外链;" json:"is_link"`                    // 是否外链
 }
 
 func BaseNewMenu(base MenuBase) *Menu {

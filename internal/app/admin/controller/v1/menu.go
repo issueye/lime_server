@@ -29,7 +29,7 @@ func GetMenus(c *gin.Context) {
 		return
 	}
 
-	roles, err := logic.ListMenu(condition)
+	roles, err := logic.NewMenuLogic().ListMenu(condition)
 	if err != nil {
 		ctl.FailWithError(err)
 		return
@@ -38,23 +38,25 @@ func GetMenus(c *gin.Context) {
 	ctl.SuccessData(roles)
 }
 
-// GetCatalog doc
+// GetAll doc
 //
 //	@tags			菜单
-//	@Summary		获取一级菜单列表
-//	@Description	获取一级菜单列表
+//	@Summary		获取所有菜单
+//	@Description	获取所有菜单
 //	@Produce		json
 //	@Success		200	{object}	controller.Response	"code: 200 成功"
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
-//	@Router			/api/v1/menu/catalog [get]
+//	@Router			/api/v1/menu/getAll [get]
 //	@Security		ApiKeyAuth
-func GetCatalog(c *gin.Context) {
+func GetAll(c *gin.Context) {
 	ctl := controller.New(c)
-	menus, err := logic.GetCatalog()
+
+	menus, err := logic.NewMenuLogic().GetMenus()
 	if err != nil {
 		ctl.FailWithError(err)
 		return
 	}
+
 	ctl.SuccessData(menus)
 }
 
@@ -77,7 +79,7 @@ func GetRoleMenus(c *gin.Context) {
 		return
 	}
 
-	menus, err := logic.GetRoleMenus(code)
+	menus, err := logic.NewMenuLogic().GetRoleMenus(code)
 	if err != nil {
 		ctl.FailWithError(err)
 		return
@@ -113,7 +115,7 @@ func SaveRoleMenus(c *gin.Context) {
 		return
 	}
 
-	err = logic.SaveRoleMenus(code, menus)
+	err = logic.NewMenuLogic().SaveRoleMenus(code, menus)
 	if err != nil {
 		ctl.FailWithError(err)
 		return
@@ -135,14 +137,14 @@ func SaveRoleMenus(c *gin.Context) {
 func CreateMenu(c *gin.Context) {
 	ctl := controller.New(c)
 
-	condition := requests.NewCreateMenu()
-	err := ctl.Bind(condition)
+	data := requests.NewCreateMenu()
+	err := ctl.Bind(data)
 	if err != nil {
 		ctl.FailWithError(err)
 		return
 	}
 
-	err = logic.CreateMenu(condition)
+	err = logic.NewMenuLogic().Create(data)
 	if err != nil {
 		ctl.FailWithError(err)
 		return
@@ -171,7 +173,7 @@ func UpdateMenu(c *gin.Context) {
 		return
 	}
 
-	err = logic.UpdateMenu(menu)
+	err = logic.NewMenuLogic().Update(menu)
 	if err != nil {
 		ctl.FailWithError(err)
 	}
@@ -205,7 +207,7 @@ func DeleteMenu(c *gin.Context) {
 		return
 	}
 
-	err = logic.DeleteMenu(uint(i))
+	err = logic.NewMenuLogic().Del(uint(i))
 	if err != nil {
 		ctl.FailWithError(err)
 		return

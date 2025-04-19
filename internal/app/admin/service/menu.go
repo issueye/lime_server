@@ -20,13 +20,6 @@ func NewMenu(args ...any) *Menu {
 	return srv
 }
 
-// GetCatalog 获取目录
-func (m *Menu) GetCatalog() ([]*model.Menu, error) {
-	var menus []*model.Menu
-	err := global.DB.Model(&model.Menu{}).Where("parent_code = ?", "").Find(&menus).Error
-	return menus, err
-}
-
 // AddMenus 添加菜单
 func (m *Menu) AddMenu(menu *model.Menu) error {
 	return global.DB.Create(menu).Error

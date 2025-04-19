@@ -24,7 +24,7 @@ func FindUserByName(name string) (*response.UserInfo, error) {
 
 	user.Password = ""
 
-	menuList, err := GetMenuTree(user.UserRole.RoleCode)
+	menuList, err := NewMenuLogic().GetMenuTree(user.UserRole.RoleCode)
 	if err != nil {
 		return nil, err
 	}
