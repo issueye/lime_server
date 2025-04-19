@@ -1,6 +1,7 @@
 package initialize
 
 import (
+	"lime/internal/app/admin/initialize"
 	"lime/internal/app/admin/logic"
 	adminModel "lime/internal/app/admin/model"
 	"lime/internal/global"
@@ -33,7 +34,7 @@ func InitDATA(db *gorm.DB) {
 	logic.InitRoleMenus()
 	logic.InitUserRole()
 	logic.InitAdminUser()
-	logic.NewMenuLogic().InitMenus()
+	initialize.InitMenus()
 }
 
 func FreeDB() {

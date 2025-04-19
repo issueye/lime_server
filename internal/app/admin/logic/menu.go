@@ -166,7 +166,57 @@ func (lc *MenuLogic) ListMenu(condition *commonModel.PageQuery[*requests.QueryMe
 
 // 删除数据
 func (lc *MenuLogic) Del(id uint) error {
-	return service.NewMenu().Delete(id)
+	// 查询是否存在
+	menuSrv := service.NewMenu()
+	menu, err := menuSrv.GetById(id)
+	if err != nil {
+		return err
+	}
+
+	if menu.ID == 0 {
+		return errors.New("菜单不存在")
+	}
+
+	// 判断是否有子菜单
+	count, err := menuSrv.GetCountByFields(map[string]any{"parent_code": menu.Code})
+	if err != nil {
+		return err
+	}
+
+	if count > 0 {
+		return errors.New("菜单下有子菜单，不允许删除")
+	}
+
+	// 判断菜单是否可以被移除
+	if menu.IsCanNotRemove == 1 {
+		return errors.New("菜单不允许被移除")
+	}
+
+	// 开启事务
+	menuSrv.Begin()
+	defer func() {
+		if err != nil {
+			menuSrv.Rollback()
+			slog.Error("删除菜单失败", "error", err)
+			return
+		}
+
+		menuSrv.Commit()
+		slog.Info("删除菜单成功", slog.Any("菜单", menu))
+	}()
+
+	err = menuSrv.Delete(id)
+	if err != nil {
+		return err
+	}
+
+	// 删除角色菜单
+	err = service.NewRoleMenu(menuSrv.GetDB()).DeleteByFields(map[string]any{"menu_code": menu.Code})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (lc *MenuLogic) GetMenuTree(Role_code string) ([]*model.Menu, error) {
@@ -215,21 +265,6 @@ func (lc *MenuLogic) MakeTree(list []*model.Menu) []*model.Menu {
 	}
 
 	return fList
-}
-
-func (lc *MenuLogic) InitMenus() {
-	menus := []*model.Menu{
-		model.BaseNewMenu(model.MenuBase{Code: "9000", Name: "系统管理", Description: "系统管理", Frontpath: "/system", Order: 90, Visible: true, Icon: "Setting", ParentCode: "", MenuType: model.EMT_DIRECTORY, IsLink: 0}),
-		model.BaseNewMenu(model.MenuBase{Code: "9001", Name: "用户管理", Description: "用户管理", Frontpath: "/system/user", Order: 91, Visible: true, Icon: "User", ParentCode: "9000", MenuType: model.EMT_MENU, IsLink: 0}),
-		model.BaseNewMenu(model.MenuBase{Code: "9002", Name: "角色管理", Description: "角色管理", Frontpath: "/system/role", Order: 92, Visible: true, Icon: "Avatar", ParentCode: "9000", MenuType: model.EMT_MENU, IsLink: 0}),
-		model.BaseNewMenu(model.MenuBase{Code: "9003", Name: "菜单管理", Description: "菜单管理", Frontpath: "/system/menu", Order: 93, Visible: true, Icon: "Menu", ParentCode: "9000", MenuType: model.EMT_MENU, IsLink: 0}),
-		model.BaseNewMenu(model.MenuBase{Code: "9004", Name: "字典管理", Description: "字典管理", Frontpath: "/system/dict_mana", Order: 94, Visible: true, Icon: "List", ParentCode: "9000", MenuType: model.EMT_MENU, IsLink: 0}),
-		model.BaseNewMenu(model.MenuBase{Code: "9005", Name: "系统设置", Description: "系统设置", Frontpath: "/system/setting", Order: 95, Visible: true, Icon: "Tools", ParentCode: "9000", MenuType: model.EMT_MENU, IsLink: 0}),
-	}
-
-	for _, menu := range menus {
-		lc.MenuIsNotExistAdd(menu)
-	}
 }
 
 func (lc *MenuLogic) MenuIsNotExistAdd(menu *model.Menu) {
