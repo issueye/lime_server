@@ -2,8 +2,6 @@ package route
 
 import (
 	adminRouter "lime/internal/app/admin/router"
-	projectRouter "lime/internal/app/project/router"
-	"lime/internal/app/websocket"
 	"lime/internal/common/config"
 	"lime/internal/common/controller"
 	"lime/internal/global"
@@ -34,12 +32,7 @@ func InitRouter(r *gin.Engine) {
 
 		// 注册管理路由
 		adminRouter.Register(v1)
-		// 注册项目管理路由
-		projectRouter.Register(v1)
 	}
-
-	// websocket
-	r.GET("/ws_compile", websocket.GetWebSocketManager().HandleWebSocket)
 
 	r.NoRoute(func(ctx *gin.Context) {
 		global.Logger.Logger.Error("404", zap.String("path", ctx.Request.URL.Path), zap.String("method", ctx.Request.Method))
