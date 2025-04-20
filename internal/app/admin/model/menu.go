@@ -28,6 +28,7 @@ type MenuBase struct {
 	MenuType       EnumMenuType `gorm:"column:menu_type;comment:菜单类型;" json:"menu_type"`                  // 菜单类型
 	IsLink         uint         `gorm:"column:is_link;comment:是否外链;" json:"is_link"`                      // 是否外链 0 否 1 是
 	IsCanNotRemove uint         `gorm:"column:is_can_not_remove;comment:是否可删除;" json:"is_can_not_remove"` // 是否可删除 0 否 1 是
+	IsHome         uint         `gorm:"column:is_home;comment:是否首页;" json:"is_home"`                      // 是否首页 0 否 1 是
 }
 
 func BaseNewMenu(base MenuBase) *Menu {

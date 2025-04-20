@@ -30,11 +30,10 @@ func InitDATA(db *gorm.DB) {
 	db.AutoMigrate(&adminModel.DictDetail{})
 
 	// admin
-	logic.InitRoles()
 	logic.InitRoleMenus()
 	logic.InitUserRole()
 	logic.InitAdminUser()
-	initialize.InitMenus()
+	initialize.InitAdminData()
 }
 
 func FreeDB() {

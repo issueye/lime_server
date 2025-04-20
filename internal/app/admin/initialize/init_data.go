@@ -3,8 +3,29 @@ package initialize
 import (
 	"lime/internal/app/admin/logic"
 	"lime/internal/app/admin/model"
+	"log/slog"
 )
 
+func InitAdminData() {
+	InitRoles()
+	InitMenus()
+}
+
+// 初始化角色数据
+func InitRoles() {
+	Roles := []model.RoleBase{
+		{Code: "9001", Name: "管理员", IsCanNotRemove: 1, Remark: "系统生成"},
+	}
+
+	lc := logic.NewRoleLogic()
+	for _, Role := range Roles {
+		data := model.NewRole(Role)
+		slog.Info("检查角色数据", "code", Role.Code, "name", Role.Name)
+		lc.RoleIsNotExistAdd(data)
+	}
+}
+
+// 初始化菜单数据
 func InitMenus() {
 	menus := []model.MenuBase{
 		{Code: "1000", Name: "首页", Description: "首页", Frontpath: "/home", Order: 10, Visible: true, Icon: "Home", ParentCode: "", MenuType: model.EMT_MENU, IsLink: 0, IsCanNotRemove: 1},
@@ -19,6 +40,7 @@ func InitMenus() {
 	lc := logic.NewMenuLogic()
 	for _, menu := range menus {
 		m := model.BaseNewMenu(menu)
+		slog.Info("检查菜单数据", "code", menu.Code, "name", menu.Name)
 		lc.MenuIsNotExistAdd(m)
 	}
 }

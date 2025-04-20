@@ -29,7 +29,8 @@ func GetRoles(c *gin.Context) {
 		return
 	}
 
-	roles, err := logic.ListRole(condition)
+	lc := logic.NewRoleLogic()
+	roles, err := lc.ListRole(condition)
 	if err != nil {
 		ctl.FailWithError(err)
 		return
@@ -58,7 +59,8 @@ func CreateRole(c *gin.Context) {
 		return
 	}
 
-	err = logic.CreateRole(condition)
+	lc := logic.NewRoleLogic()
+	err = lc.CreateRole(condition)
 	if err != nil {
 		ctl.FailWithError(err)
 		return
@@ -87,7 +89,8 @@ func UpdateRole(c *gin.Context) {
 		return
 	}
 
-	err = logic.UpdateRole(condition)
+	lc := logic.NewRoleLogic()
+	err = lc.UpdateRole(condition)
 	if err != nil {
 		ctl.FailWithError(err)
 	}
@@ -121,7 +124,8 @@ func DeleteRole(c *gin.Context) {
 		return
 	}
 
-	err = logic.DeleteRole(uint(i))
+	lc := logic.NewRoleLogic()
+	err = lc.DeleteRole(uint(i))
 	if err != nil {
 		ctl.FailWithError(err)
 		return
