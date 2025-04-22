@@ -23,7 +23,7 @@ func New(ctx *gin.Context) Controller {
 	}
 }
 
-func (ctl *Controller) Success() {
+func (ctl Controller) Success() {
 	ctl.JSON(200, &Response{
 		Code: 200,
 		Msg:  "success",
@@ -32,7 +32,7 @@ func (ctl *Controller) Success() {
 }
 
 // 成功并且返回数据
-func (ctl *Controller) SuccessData(data any) {
+func (ctl Controller) SuccessData(data any) {
 	ctl.JSON(200, &Response{
 		Code: 200,
 		Msg:  "success",
@@ -41,7 +41,7 @@ func (ctl *Controller) SuccessData(data any) {
 }
 
 // 失败
-func (ctl *Controller) Fail(msg string) {
+func (ctl Controller) Fail(msg string) {
 	ctl.JSON(200, &Response{
 		Code: 400,
 		Msg:  msg,
@@ -50,7 +50,7 @@ func (ctl *Controller) Fail(msg string) {
 }
 
 // 失败 返回指定code
-func (ctl *Controller) FailWithCode(code int, msg string) {
+func (ctl Controller) FailWithCode(code int, msg string) {
 	ctl.JSON(200, &Response{
 		Code: code,
 		Msg:  msg,
@@ -59,11 +59,11 @@ func (ctl *Controller) FailWithCode(code int, msg string) {
 }
 
 // InternalServerError
-func (ctl *Controller) InternalServerError(msg string) {
+func (ctl Controller) InternalServerError(msg string) {
 	ctl.FailWithCode(http.StatusInternalServerError, msg)
 }
 
-func (ctl *Controller) FailWithError(err error) {
+func (ctl Controller) FailWithError(err error) {
 	if strings.Contains(err.Error(), "Token is expired") {
 		ctl.Unauthorized("token 过期")
 		return
@@ -72,16 +72,16 @@ func (ctl *Controller) FailWithError(err error) {
 	ctl.Fail(err.Error())
 }
 
-func (ctl *Controller) BadRequest(msg string) {
+func (ctl Controller) BadRequest(msg string) {
 	ctl.FailWithCode(http.StatusBadRequest, msg)
 }
 
 // 401
-func (ctl *Controller) Unauthorized(msg string) {
+func (ctl Controller) Unauthorized(msg string) {
 	ctl.FailWithCode(http.StatusUnauthorized, msg)
 }
 
 // 403
-func (ctl *Controller) Forbidden(msg string) {
+func (ctl Controller) Forbidden(msg string) {
 	ctl.FailWithCode(http.StatusForbidden, msg)
 }

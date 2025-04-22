@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"lime/docs"
-	"lime/internal/common/middleware"
 	"lime/internal/global"
+	"lime/internal/middleware"
 	"net/http"
 	"time"
 

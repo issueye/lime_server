@@ -5,6 +5,7 @@ import (
 	"lime/internal/app/admin/model"
 	"log/slog"
 
+	adapter "github.com/casbin/gorm-adapter/v3"
 	"gorm.io/gorm"
 )
 
@@ -21,15 +22,15 @@ func InitAdminData(db *gorm.DB) {
 
 func InitAutoMigrate(db *gorm.DB) {
 	// 自动迁移模式
-	db.AutoMigrate(&model.User{})
-	db.AutoMigrate(&model.Role{})
-	db.AutoMigrate(&model.UserRole{})
-	db.AutoMigrate(&model.RoleMenu{})
-	db.AutoMigrate(&model.ApiInfo{})
-	db.AutoMigrate(&model.Menu{})
-	db.AutoMigrate(&model.DictsInfo{})
-	db.AutoMigrate(&model.DictDetail{})
-
+	db.AutoMigrate(model.User{})         // 用户信息
+	db.AutoMigrate(model.Role{})         // 角色信息
+	db.AutoMigrate(model.UserRole{})     // 用户角色信息
+	db.AutoMigrate(model.RoleMenu{})     // 角色菜单信息
+	db.AutoMigrate(adapter.CasbinRule{}) // 权限信息
+	db.AutoMigrate(model.ApiInfo{})      // 接口信息
+	db.AutoMigrate(model.Menu{})         // 菜单信息
+	db.AutoMigrate(model.DictsInfo{})    // 字典信息
+	db.AutoMigrate(model.DictDetail{})   // 字典详情信息
 }
 
 func InitUser() {

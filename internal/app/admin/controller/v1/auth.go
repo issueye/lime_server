@@ -4,6 +4,7 @@ import (
 	"lime/internal/app/admin/logic"
 	"lime/internal/app/admin/requests"
 	"lime/internal/app/admin/response"
+	"lime/internal/common"
 	"lime/internal/common/controller"
 
 	"github.com/gin-gonic/gin"
@@ -56,7 +57,7 @@ func RefreshToken(c *gin.Context) {
 	ctl := controller.New(c)
 
 	tokenString := c.GetHeader("Authorization")
-	user, tokenStr, err := logic.RefreshToken(tokenString)
+	token, err := common.RefreshToken(tokenString)
 
 	if err != nil {
 		ctl.FailWithError(err)
@@ -64,9 +65,9 @@ func RefreshToken(c *gin.Context) {
 	}
 
 	res := new(response.Auth)
-	res.ID = user.ID
-	res.User = user.Username
-	res.Token = tokenStr
+	res.ID = token.ID
+	res.User = token.Username
+	res.Token = token.Token
 
 	ctl.SuccessData(res)
 }

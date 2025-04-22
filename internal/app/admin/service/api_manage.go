@@ -36,7 +36,8 @@ func (srv *ApiManage) CheckExist(api *model.ApiInfo) (bool, error) {
 func (srv *ApiManage) GetList(condition *commonModel.PageQuery[*requests.QueryApiInfo]) (*commonModel.ResPage[model.ApiInfo], error) {
 	return service.GetList[model.ApiInfo](condition, func(qu *requests.QueryApiInfo, d *gorm.DB) *gorm.DB {
 		if qu.KeyWords != "" {
-			d = d.Where("title like ? or path like ? or method like ?",
+			d = d.Where("title like ? or path like ? or method like ? or api_group like ?",
+				"%"+qu.KeyWords+"%",
 				"%"+qu.KeyWords+"%",
 				"%"+qu.KeyWords+"%",
 				"%"+qu.KeyWords+"%",

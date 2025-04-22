@@ -2,6 +2,7 @@ package route
 
 import (
 	v1 "lime/internal/app/admin/controller/v1"
+	"lime/internal/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -34,7 +35,7 @@ func (router *Router) Register(r *gin.RouterGroup) {
 		auth.GET("refresh", v1.RefreshToken) // 刷新token接口
 	}
 
-	admin := r.Group("admin")
+	admin := r.Group("admin").Use(middleware.CasbinHandler())
 	{
 		admin.GET("userInfo", router.UserHandlers.GetUserInfo)           // 获取用户信息接口
 		admin.POST("upload", v1.Upload)                                  // 上传文件接口
@@ -42,7 +43,7 @@ func (router *Router) Register(r *gin.RouterGroup) {
 		admin.POST("updatepassword", router.UserHandlers.UpdatePassword) // 更新密码接口
 	}
 
-	user := r.Group("user")
+	user := r.Group("user").Use(middleware.CasbinHandler())
 	{
 		user.POST("list", router.UserHandlers.GetUsers)           // 根据条件查询数据
 		user.PUT("update", router.UserHandlers.UpdateUser)        // 修改用户信息
@@ -50,7 +51,7 @@ func (router *Router) Register(r *gin.RouterGroup) {
 		user.POST("add", router.UserHandlers.CreateUser)          // 创建用户信息
 	}
 
-	role := r.Group("role")
+	role := r.Group("role").Use(middleware.CasbinHandler())
 	{
 		role.POST("list", router.RoleHandlers.Roles)          // 根据条件查询数据
 		role.PUT("update", router.RoleHandlers.Update)        // 修改角色信息
@@ -58,7 +59,7 @@ func (router *Router) Register(r *gin.RouterGroup) {
 		role.POST("add", router.RoleHandlers.Create)          // 创建角色信息
 	}
 
-	menu := r.Group("menu")
+	menu := r.Group("menu").Use(middleware.CasbinHandler())
 	{
 		menu.POST("list", router.MenuHandlers.GetMenus)                     // 根据条件查询数据
 		menu.GET("getAll", router.MenuHandlers.GetAll)                      // 获取所有菜单
@@ -69,7 +70,7 @@ func (router *Router) Register(r *gin.RouterGroup) {
 		menu.POST("add", router.MenuHandlers.Create)                        // 创建菜单
 	}
 
-	settings := r.Group("settings")
+	settings := r.Group("settings").Use(middleware.CasbinHandler())
 	{
 		settings.GET("system", router.SettingHandlers.GetSystemSettings) // 获取系统设置
 		settings.PUT("system", router.SettingHandlers.SetSystemSettings) // 设置系统设置
@@ -77,7 +78,7 @@ func (router *Router) Register(r *gin.RouterGroup) {
 		settings.PUT("logger", router.SettingHandlers.SetLoggerSettings) // 设置日志设置
 	}
 
-	dict_mana := r.Group("dict_mana")
+	dict_mana := r.Group("dict_mana").Use(middleware.CasbinHandler())
 	{
 		dict_mana.POST("", router.DictHandlers.CreateDicts)              // 创建字典
 		dict_mana.PUT("", router.DictHandlers.UpdateDicts)               // 更新字典
@@ -90,7 +91,7 @@ func (router *Router) Register(r *gin.RouterGroup) {
 		dict_mana.GET(":id/details", router.DictHandlers.GetDictDetails) // 查询字典详情
 	}
 
-	api_manage := r.Group("api_manage")
+	api_manage := r.Group("api_manage").Use(middleware.CasbinHandler())
 	{
 		api_manage.POST("", router.ApiHandlers.CreateApiInfo)      // 创建接口
 		api_manage.PUT("", router.ApiHandlers.UpdateApiInfo)       // 更新接口
