@@ -14,28 +14,20 @@ import (
 )
 
 type HttpServer struct {
-	Port   int
-	Mode   string
 	Router Router
-	Ctx    context.Context
 	Http   *http.Server
 	engine *gin.Engine
 }
 
-func NewHttpServer(ctx context.Context, port int, mode string) *HttpServer {
+func NewHttpServer() *HttpServer {
 	return &HttpServer{
-		Port:   port,
-		Mode:   mode,
 		engine: gin.New(),
 		Router: MakeRouter(),
-		Ctx:    ctx,
 	}
 }
 
-func (server *HttpServer) Run() {
-	// port := config.GetParam(config.SERVER, "http-port", config.DEF_PORT).Int()
-	// mode := config.GetParam(config.SERVER, "mode", "debug").String()
-	gin.SetMode(server.Mode)
+func (server *HttpServer) Run(ctx context.Context, port int, mode string) {
+	gin.SetMode(mode)
 
 	// 中间件
 	server.engine.Use(middleware.Cors())
@@ -46,7 +38,7 @@ func (server *HttpServer) Run() {
 	server.Router.RegisterRouter(server.engine)
 
 	server.Http = &http.Server{
-		Addr:    fmt.Sprintf(":%d", server.Port),
+		Addr:    fmt.Sprintf(":%d", port),
 		Handler: server.engine,
 	}
 
@@ -71,7 +63,7 @@ func (server *HttpServer) Run() {
 		}
 
 		global.WriteLog("HTTP服务关闭 --->")
-	}(server.Ctx)
+	}(ctx)
 }
 
 func (server *HttpServer) Stop() {

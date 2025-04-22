@@ -95,6 +95,6 @@ func (router *Router) Register(r *gin.RouterGroup) {
 		api_manage.POST("", router.ApiHandlers.CreateApiInfo)      // 创建接口
 		api_manage.PUT("", router.ApiHandlers.UpdateApiInfo)       // 更新接口
 		api_manage.DELETE(":id", router.ApiHandlers.DeleteApiInfo) // 删除接口
-		api_manage.POST("", router.ApiHandlers.GetApiInfos)        // 查询接口列表
+		api_manage.POST("list", router.ApiHandlers.GetApiInfos)    // 查询接口列表
 	}
 }

@@ -23,7 +23,7 @@ func MakeApiManageController() ApiManageController {
 //	@Produce		json
 //	@Success		200	{object}	controller.Response	"code: 200 成功"
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
-//	@Router			/api/v1/api_manage [get]
+//	@Router			/api/v1/api_manage/list [get]
 //	@Security		ApiKeyAuth
 func (control *ApiManageController) GetApiInfos(c *gin.Context) {
 	ctl := controller.New(c)
@@ -99,6 +99,7 @@ func (control *ApiManageController) UpdateApiInfo(c *gin.Context) {
 	err = lc.Update(condition)
 	if err != nil {
 		ctl.FailWithError(err)
+		return
 	}
 
 	ctl.Success()

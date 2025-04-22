@@ -13,7 +13,8 @@ type Server struct {
 
 func NewServer(ctx context.Context) *Server {
 	return &Server{
-		Ctx: ctx,
+		Ctx:        ctx,
+		HttpServer: http.NewHttpServer(),
 	}
 }
 
@@ -25,7 +26,7 @@ func (server *Server) Run() {
 
 	port := config.GetParam(config.SERVER, "http-port", config.DEF_PORT).Int()
 	mode := config.GetParam(config.SERVER, "mode", "debug").String()
-	server.HttpServer = http.NewHttpServer(server.Ctx, port, mode)
+	server.HttpServer.Run(server.Ctx, port, mode)
 }
 
 func (server *Server) Stop() {
