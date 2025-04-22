@@ -74,7 +74,7 @@ func (control *UserController) UpdateUserinfo(c *gin.Context) {
 		return
 	}
 
-	err = logic.UpdateUser(&user)
+	err = logic.NewUserLogic().UpdateUser(&user)
 	if err != nil {
 		ctl.FailWithError(err)
 		return
@@ -109,7 +109,7 @@ func (control *UserController) UpdatePassword(c *gin.Context) {
 		return
 	}
 
-	err = logic.UpdatePassword(user, condition)
+	err = logic.NewUserLogic().UpdatePassword(user, condition)
 	if err != nil {
 		ctl.FailWithError(err)
 		return
@@ -138,7 +138,7 @@ func (control *UserController) GetUsers(c *gin.Context) {
 		return
 	}
 
-	users, err := logic.ListUser(condition)
+	users, err := logic.NewUserLogic().ListUser(condition)
 	if err != nil {
 		ctl.FailWithError(err)
 		return
@@ -167,7 +167,7 @@ func (control *UserController) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	err = logic.UpdateUserInfo(condition)
+	err = logic.NewUserLogic().UpdateUserInfo(condition)
 	if err != nil {
 		ctl.FailWithError(err)
 		return
@@ -202,7 +202,7 @@ func (control *UserController) DeleteUser(c *gin.Context) {
 		return
 	}
 
-	err = logic.DeleteUser(uint(i))
+	err = logic.NewUserLogic().DeleteUser(uint(i))
 	if err != nil {
 		ctl.FailWithError(err)
 		return
@@ -231,7 +231,7 @@ func (control *UserController) CreateUser(c *gin.Context) {
 		return
 	}
 
-	err = logic.CreateUser(data)
+	err = logic.NewUserLogic().CreateUser(data)
 	if err != nil {
 		ctl.FailWithError(err)
 	}

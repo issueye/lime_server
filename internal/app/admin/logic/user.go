@@ -9,11 +9,17 @@ import (
 	"lime/internal/global"
 )
 
-func ListUser(condition *commonModel.PageQuery[*requests.QueryUser]) (*commonModel.ResPage[model.User], error) {
+type UserLogic struct{}
+
+func NewUserLogic() *UserLogic {
+	return &UserLogic{}
+}
+
+func (lc *UserLogic) ListUser(condition *commonModel.PageQuery[*requests.QueryUser]) (*commonModel.ResPage[model.User], error) {
 	return service.NewUser().ListUser(condition)
 }
 
-func UpdateUser(u *model.User) error {
+func (lc *UserLogic) UpdateUser(u *model.User) error {
 	data := make(map[string]any)
 	data["username"] = u.Username
 	data["nick_name"] = u.NickName
@@ -22,7 +28,7 @@ func UpdateUser(u *model.User) error {
 	return service.NewUser().UpdateByMap(u.ID, data)
 }
 
-func UpdatePassword(user model.User, u *requests.UpdatePassword) error {
+func (lc *UserLogic) UpdatePassword(user model.User, u *requests.UpdatePassword) error {
 	// 检查旧密码是否正确
 	userInfo, err := service.NewUser().GetById(user.ID)
 	if err != nil {
@@ -54,7 +60,7 @@ func UpdatePassword(user model.User, u *requests.UpdatePassword) error {
 	return service.NewUser().UpdateByMap(user.ID, map[string]any{"password": pwd})
 }
 
-func UpdateUserInfo(u *requests.UpdateUser) error {
+func (lc *UserLogic) UpdateUserInfo(u *requests.UpdateUser) error {
 	data := make(map[string]any)
 	data["username"] = u.Username
 	data["nick_name"] = u.NickName
@@ -63,15 +69,15 @@ func UpdateUserInfo(u *requests.UpdateUser) error {
 	return service.NewUser().UpdateByMap(uint(u.Id), data)
 }
 
-func DeleteUser(id uint) error {
+func (lc *UserLogic) DeleteUser(id uint) error {
 	return service.NewUser().Delete(id)
 }
 
-func GetUserById(id uint) (*model.User, error) {
+func (lc *UserLogic) GetUserById(id uint) (*model.User, error) {
 	return service.NewUser().GetById(id)
 }
 
-func CreateUser(u *requests.CreateUser) error {
+func (lc *UserLogic) CreateUser(u *requests.CreateUser) error {
 	pwd, err := MakePassword(global.DEFAULT_PWD)
 	if err != nil {
 		return err
@@ -91,7 +97,7 @@ func CreateUser(u *requests.CreateUser) error {
 }
 
 // 初始化管理员用户数据
-func InitAdminUser() {
+func (lc *UserLogic) InitAdminUser() {
 	// 检查是否已经存在管理员用户
 	adminUser, err := service.NewUser().GetUserByName("admin")
 	if err != nil {

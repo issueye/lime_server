@@ -37,9 +37,9 @@ func (lc *ApiManageLogic) Create(info *requests.CreateApiInfo) error {
 
 	// 检查是否存在
 	apiDataInfo, err := srv.GetByMap(map[string]any{
-		"path":   info.Path,
-		"method": info.Method,
-		"group":  info.Group,
+		"path":      info.Path,
+		"method":    info.Method,
+		"api_group": info.Group,
 	})
 	if err != nil {
 		return err
@@ -50,10 +50,10 @@ func (lc *ApiManageLogic) Create(info *requests.CreateApiInfo) error {
 	}
 
 	base := model.ApiBase{
-		Title:  info.Title,
-		Path:   info.Path,
-		Method: info.Method,
-		Group:  info.Group,
+		Title:    info.Title,
+		Path:     info.Path,
+		Method:   info.Method,
+		ApiGroup: info.Group,
 	}
 
 	apiInfo := model.NewApi(base)
@@ -65,9 +65,9 @@ func (lc *ApiManageLogic) Update(info *requests.UpdateApiInfo) error {
 
 	// 检查是否存在
 	apiDataInfo, err := srv.GetByMap(map[string]any{
-		"path":   info.Path,
-		"method": info.Method,
-		"group":  info.Group,
+		"path":      info.Path,
+		"method":    info.Method,
+		"api_group": info.Group,
 	})
 	if err != nil {
 		return err
@@ -78,10 +78,10 @@ func (lc *ApiManageLogic) Update(info *requests.UpdateApiInfo) error {
 	}
 
 	updateData := map[string]any{
-		"title":  info.Title,
-		"path":   info.Path,
-		"group":  info.Group,
-		"method": info.Method,
+		"title":     info.Title,
+		"path":      info.Path,
+		"api_group": info.Group,
+		"method":    info.Method,
 	}
 
 	return srv.UpdateByMap(info.Id, updateData)
