@@ -2,27 +2,33 @@ package initialize
 
 import (
 	"context"
-	"lime/internal/global"
+	"lime/internal/common/config"
+	"lime/internal/initialize/http"
 )
 
-func RunServer(ctx context.Context) {
+type Server struct {
+	Ctx        context.Context
+	HttpServer *http.HttpServer
+}
+
+func NewServer(ctx context.Context) *Server {
+	return &Server{
+		Ctx: ctx,
+	}
+}
+
+func (server *Server) Run() {
 	InitRuntime()
 	InitConfig()
 	InitLogger()
 	InitDB()
-	InitHttpServer(ctx)
+
+	port := config.GetParam(config.SERVER, "http-port", config.DEF_PORT).Int()
+	mode := config.GetParam(config.SERVER, "mode", "debug").String()
+	server.HttpServer = http.NewHttpServer(server.Ctx, port, mode)
 }
 
-func StopServer() {
+func (server *Server) Stop() {
 	// http 服务
-	FreeHttpServer()
-	// 释放数据库连接
-	FreeDB()
-
-	// 处理日志
-	if global.Logger != nil {
-		global.WriteLog("日志关闭")
-		global.Logger.Close()
-		global.WriteLog("日志关闭成功")
-	}
+	server.HttpServer.Stop()
 }

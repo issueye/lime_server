@@ -1,18 +1,27 @@
-package route
+package http
 
 import (
 	adminRouter "lime/internal/app/admin/router"
 	"lime/internal/common/config"
 	"lime/internal/common/controller"
-	"lime/internal/global"
+	"log/slog"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
 )
 
-func InitRouter(r *gin.Engine) {
-	v1 := r.Group("/api/v1")
+type Router struct {
+	adminRouter adminRouter.Router
+}
+
+func MakeRouter() Router {
+	return Router{
+		adminRouter: adminRouter.MakeRouter(),
+	}
+}
+
+func (router *Router) RegisterRouter(engine *gin.Engine) {
+	v1 := engine.Group("/api/v1")
 	{
 		v1.GET("/ping", func(ctx *gin.Context) {
 			ctl := controller.New(ctx)
@@ -31,11 +40,11 @@ func InitRouter(r *gin.Engine) {
 		})
 
 		// 注册管理路由
-		adminRouter.Register(v1)
+		router.adminRouter.Register(v1)
 	}
 
-	r.NoRoute(func(ctx *gin.Context) {
-		global.Logger.Logger.Error("404", zap.String("path", ctx.Request.URL.Path), zap.String("method", ctx.Request.Method))
+	engine.NoRoute(func(ctx *gin.Context) {
+		slog.Error("404", slog.String("path", ctx.Request.URL.Path), slog.String("method", ctx.Request.Method))
 		ctl := controller.New(ctx)
 		ctl.FailWithCode(http.StatusNotFound, "not found")
 	})

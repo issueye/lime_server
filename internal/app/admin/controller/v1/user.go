@@ -9,6 +9,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type UserController struct{}
+
+func MakeUserController() UserController {
+	return UserController{}
+}
+
 // GetUserInfo doc
 //
 //	@tags			用户
@@ -19,7 +25,7 @@ import (
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
 //	@Router			/api/v1/admin/userInfo [get]
 //	@Security		ApiKeyAuth
-func GetUserInfo(c *gin.Context) {
+func (control *UserController) GetUserInfo(c *gin.Context) {
 	ctl := controller.New(c)
 
 	// 从token 中解析出用户信息
@@ -52,7 +58,7 @@ func GetUserInfo(c *gin.Context) {
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
 //	@Router			/api/v1/admin/updateuserinfo [post]
 //	@Security		ApiKeyAuth
-func UpdateUserinfo(c *gin.Context) {
+func (control *UserController) UpdateUserinfo(c *gin.Context) {
 	ctl := controller.New(c)
 
 	// 从token 中解析出用户信息
@@ -87,7 +93,7 @@ func UpdateUserinfo(c *gin.Context) {
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
 //	@Router			/api/v1/admin/updatepassword [post]
 //	@Security		ApiKeyAuth
-func UpdatePassword(c *gin.Context) {
+func (control *UserController) UpdatePassword(c *gin.Context) {
 	ctl := controller.New(c)
 	condition := requests.NewUpdatePassword()
 	err := ctl.Bind(condition)
@@ -122,7 +128,7 @@ func UpdatePassword(c *gin.Context) {
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
 //	@Router			/api/v1/user/list [get]
 //	@Security		ApiKeyAuth
-func GetUsers(c *gin.Context) {
+func (control *UserController) GetUsers(c *gin.Context) {
 	ctl := controller.New(c)
 
 	condition := requests.NewQueryUser()
@@ -151,7 +157,7 @@ func GetUsers(c *gin.Context) {
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
 //	@Router			/api/v1/user/update [put]
 //	@Security		ApiKeyAuth
-func UpdateUser(c *gin.Context) {
+func (control *UserController) UpdateUser(c *gin.Context) {
 	ctl := controller.New(c)
 
 	condition := requests.NewUpdateUser()
@@ -181,7 +187,7 @@ func UpdateUser(c *gin.Context) {
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
 //	@Router			/api/v1/user/update [delete]
 //	@Security		ApiKeyAuth
-func DeleteUser(c *gin.Context) {
+func (control *UserController) DeleteUser(c *gin.Context) {
 	ctl := controller.New(c)
 
 	id := ctl.Param("id")
@@ -215,7 +221,7 @@ func DeleteUser(c *gin.Context) {
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
 //	@Router			/api/v1/user/create [post]
 //	@Security		ApiKeyAuth
-func CreateUser(c *gin.Context) {
+func (control *UserController) CreateUser(c *gin.Context) {
 	ctl := controller.New(c)
 
 	data := requests.NewCreateUser()

@@ -9,64 +9,64 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type RoleController struct{}
+type ApiManageController struct{}
 
-func MakeRoleController() RoleController {
-	return RoleController{}
+func MakeApiManageController() ApiManageController {
+	return ApiManageController{}
 }
 
-// GetRoles doc
+// GetApiInfos doc
 //
-//	@tags			角色
-//	@Summary		获取角色列表
-//	@Description	获取角色列表
+//	@tags			接口信息
+//	@Summary		获取接口信息列表
+//	@Description	获取接口信息列表
 //	@Produce		json
 //	@Success		200	{object}	controller.Response	"code: 200 成功"
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
-//	@Router			/api/v1/role/list [get]
+//	@Router			/api/v1/api_manage [get]
 //	@Security		ApiKeyAuth
-func (control *RoleController) Roles(c *gin.Context) {
+func (control *ApiManageController) GetApiInfos(c *gin.Context) {
 	ctl := controller.New(c)
 
-	condition := requests.NewQueryRole()
+	condition := requests.NewQueryApiInfo()
 	err := ctl.Bind(condition)
 	if err != nil {
 		ctl.FailWithError(err)
 		return
 	}
 
-	lc := logic.NewRoleLogic()
-	roles, err := lc.ListRole(condition)
+	lc := logic.NewApiManageLogic()
+	ApiInfos, err := lc.GetList(condition)
 	if err != nil {
 		ctl.FailWithError(err)
 		return
 	}
 
-	ctl.SuccessData(roles)
+	ctl.SuccessData(ApiInfos)
 }
 
-// CreateRole doc
+// CreateApiInfo doc
 //
-//	@tags			角色
-//	@Summary		创建角色
-//	@Description	创建角色
+//	@tags			接口信息
+//	@Summary		创建接口信息
+//	@Description	创建接口信息
 //	@Produce		json
 //	@Success		200	{object}	controller.Response	"code: 200 成功"
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
-//	@Router			/api/v1/role/create [post]
+//	@Router			/api/v1/api_manage [post]
 //	@Security		ApiKeyAuth
-func (control *RoleController) Create(c *gin.Context) {
+func (control *ApiManageController) CreateApiInfo(c *gin.Context) {
 	ctl := controller.New(c)
 
-	condition := requests.NewCreateRole()
-	err := ctl.Bind(condition)
+	data := requests.NewCreateApiInfo()
+	err := ctl.Bind(data)
 	if err != nil {
 		ctl.FailWithError(err)
 		return
 	}
 
-	lc := logic.NewRoleLogic()
-	err = lc.CreateRole(condition)
+	lc := logic.NewApiManageLogic()
+	err = lc.Create(data)
 	if err != nil {
 		ctl.FailWithError(err)
 		return
@@ -75,28 +75,28 @@ func (control *RoleController) Create(c *gin.Context) {
 	ctl.Success()
 }
 
-// UpdateRole doc
+// UpdateApiInfo doc
 //
-//	@tags			角色
-//	@Summary		修改角色
-//	@Description	修改角色
+//	@tags			接口信息
+//	@Summary		修改接口信息
+//	@Description	修改接口信息
 //	@Produce		json
 //	@Success		200	{object}	controller.Response	"code: 200 成功"
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
-//	@Router			/api/v1/role/update [put]
+//	@Router			/api/v1/api_manage [put]
 //	@Security		ApiKeyAuth
-func (control *RoleController) Update(c *gin.Context) {
+func (control *ApiManageController) UpdateApiInfo(c *gin.Context) {
 	ctl := controller.New(c)
 
-	condition := requests.NewUpdateRole()
+	condition := requests.NewUpdateApiInfo()
 	err := ctl.Bind(condition)
 	if err != nil {
 		ctl.FailWithError(err)
 		return
 	}
 
-	lc := logic.NewRoleLogic()
-	err = lc.UpdateRole(condition)
+	lc := logic.NewApiManageLogic()
+	err = lc.Update(condition)
 	if err != nil {
 		ctl.FailWithError(err)
 	}
@@ -104,18 +104,18 @@ func (control *RoleController) Update(c *gin.Context) {
 	ctl.Success()
 }
 
-// DeleteRole doc
+// DeleteApiInfo doc
 //
-//	@tags			角色
-//	@Summary		删除角色
-//	@Description	删除角色
+//	@tags			接口信息
+//	@Summary		删除接口信息
+//	@Description	删除接口信息
 //	@Produce		json
-//	@Param			id		path	int	true	"角色id"
+//	@Param			id		path	int	true	"接口信息id"
 //	@Success		200	{object}	controller.Response	"code: 200 成功"
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
-//	@Router			/api/v1/role/delete [delete]
+//	@Router			/api/v1/api_manage [delete]
 //	@Security		ApiKeyAuth
-func (control *RoleController) Delete(c *gin.Context) {
+func (control *ApiManageController) DeleteApiInfo(c *gin.Context) {
 	ctl := controller.New(c)
 
 	id := ctl.Param("id")
@@ -130,8 +130,8 @@ func (control *RoleController) Delete(c *gin.Context) {
 		return
 	}
 
-	lc := logic.NewRoleLogic()
-	err = lc.DeleteRole(uint(i))
+	lc := logic.NewApiManageLogic()
+	err = lc.Delete(uint(i))
 	if err != nil {
 		ctl.FailWithError(err)
 		return

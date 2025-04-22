@@ -27,6 +27,8 @@ import (
 //go:embed web/*
 var webDir embed.FS
 
+var server *initialize.Server
+
 func showVersion() {
 	versionInfo := config.GetVersionInfo()
 	fmt.Printf("Version: %s\n", global.VERSION)
@@ -52,12 +54,9 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	// 初始化并启动服务
-	initialize.RunServer(ctx)
-
+	server = initialize.NewServer(ctx)
+	server.Run()
 	// 运行 GUI 应用
 	vcl.RunApp(&home.FrmHome)
-
-	// 关闭服务
-	initialize.StopServer()
+	server.Stop()
 }

@@ -9,6 +9,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type DictController struct{}
+
+func MakeDictController() DictController {
+	return DictController{}
+}
+
 // CreateDicts doc
 //
 //	@tags			字典信息管理
@@ -20,7 +26,7 @@ import (
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
 //	@Router			/api/v1/dict_mana [post]
 //	@Security		ApiKeyAuth
-func CreateDicts(c *gin.Context) {
+func (control *DictController) CreateDicts(c *gin.Context) {
 	ctl := controller.New(c)
 
 	req := requests.NewCreateDicts()
@@ -51,7 +57,7 @@ func CreateDicts(c *gin.Context) {
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
 //	@Router			/api/v1/dict_mana [put]
 //	@Security		ApiKeyAuth
-func UpdateDicts(c *gin.Context) {
+func (control *DictController) UpdateDicts(c *gin.Context) {
 	ctl := controller.New(c)
 
 	req := requests.NewUpdateDicts()
@@ -82,7 +88,7 @@ func UpdateDicts(c *gin.Context) {
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
 //	@Router			/api/v1/dict_mana/{id} [delete]
 //	@Security		ApiKeyAuth
-func DeleteDicts(c *gin.Context) {
+func (control *DictController) DeleteDicts(c *gin.Context) {
 	ctl := controller.New(c)
 
 	id := c.Param("id")
@@ -117,7 +123,7 @@ func DeleteDicts(c *gin.Context) {
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
 //	@Router			/api/v1/dict_mana/list [post]
 //	@Security		ApiKeyAuth
-func DictsList(c *gin.Context) {
+func (control *DictController) DictsList(c *gin.Context) {
 	ctl := controller.New(c)
 
 	req := requests.NewQueryDicts()
@@ -148,7 +154,7 @@ func DictsList(c *gin.Context) {
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
 //	@Router			/api/v1/dict_mana/{id} [get]
 //	@Security		ApiKeyAuth
-func GetDicts(c *gin.Context) {
+func (control *DictController) GetDicts(c *gin.Context) {
 	ctl := controller.New(c)
 
 	id := c.Param("id")
@@ -183,7 +189,7 @@ func GetDicts(c *gin.Context) {
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
 //	@Router			/api/v1/dict_mana/details [post]
 //	@Security		ApiKeyAuth
-func ListDetail(c *gin.Context) {
+func (control *DictController) ListDetail(c *gin.Context) {
 	ctl := controller.New(c)
 
 	req := requests.NewQueryDictsDetail()
@@ -214,7 +220,7 @@ func ListDetail(c *gin.Context) {
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
 //	@Router			/api/v1/dict_mana/detail [post]
 //	@Security		ApiKeyAuth
-func SaveDetail(c *gin.Context) {
+func (control *DictController) SaveDetail(c *gin.Context) {
 	ctl := controller.New(c)
 
 	req := requests.NewSaveDetail()
@@ -244,7 +250,7 @@ func SaveDetail(c *gin.Context) {
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
 //	@Router			/api/v1/dict_mana/detail/{id} [delete]
 //	@Security		ApiKeyAuth
-func DelDetail(c *gin.Context) {
+func (control *DictController) DelDetail(c *gin.Context) {
 	ctl := controller.New(c)
 
 	id := c.Param("id")
@@ -279,7 +285,7 @@ func DelDetail(c *gin.Context) {
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
 //	@Router			/api/v1/dict_mana/{id}/details [get]
 //	@Security		ApiKeyAuth
-func GetDictDetails(c *gin.Context) {
+func (control *DictController) GetDictDetails(c *gin.Context) {
 	ctl := controller.New(c)
 
 	id := c.Param("id")

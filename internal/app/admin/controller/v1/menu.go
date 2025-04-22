@@ -9,6 +9,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type MenuController struct{}
+
+func MakeMenuController() MenuController {
+	return MenuController{}
+}
+
 // GetMenus doc
 //
 //	@tags			菜单
@@ -19,7 +25,7 @@ import (
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
 //	@Router			/api/v1/menu/list [get]
 //	@Security		ApiKeyAuth
-func GetMenus(c *gin.Context) {
+func (control *MenuController) GetMenus(c *gin.Context) {
 	ctl := controller.New(c)
 
 	condition := requests.NewQueryMenu()
@@ -48,7 +54,7 @@ func GetMenus(c *gin.Context) {
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
 //	@Router			/api/v1/menu/getAll [get]
 //	@Security		ApiKeyAuth
-func GetAll(c *gin.Context) {
+func (control *MenuController) GetAll(c *gin.Context) {
 	ctl := controller.New(c)
 
 	menus, err := logic.NewMenuLogic().GetMenus()
@@ -71,7 +77,7 @@ func GetAll(c *gin.Context) {
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
 //	@Router			/api/v1/menu/roleMenus/{code} [get]
 //	@Security		ApiKeyAuth
-func GetRoleMenus(c *gin.Context) {
+func (control *MenuController) GetRoleMenus(c *gin.Context) {
 	ctl := controller.New(c)
 	code := c.Param("code")
 	if code == "" {
@@ -100,7 +106,7 @@ func GetRoleMenus(c *gin.Context) {
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
 //	@Router			/api/v1/menu/saveRoleMenus/{code} [post]
 //	@Security		ApiKeyAuth
-func SaveRoleMenus(c *gin.Context) {
+func (control *MenuController) SaveRoleMenus(c *gin.Context) {
 	ctl := controller.New(c)
 	code := c.Param("code")
 	if code == "" {
@@ -124,7 +130,7 @@ func SaveRoleMenus(c *gin.Context) {
 	ctl.Success()
 }
 
-// CreateMenu doc
+// Create doc
 //
 //	@tags			菜单
 //	@Summary		创建菜单
@@ -134,7 +140,7 @@ func SaveRoleMenus(c *gin.Context) {
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
 //	@Router			/api/v1/menu/create [post]
 //	@Security		ApiKeyAuth
-func CreateMenu(c *gin.Context) {
+func (control *MenuController) Create(c *gin.Context) {
 	ctl := controller.New(c)
 
 	data := requests.NewCreateMenu()
@@ -153,7 +159,7 @@ func CreateMenu(c *gin.Context) {
 	ctl.Success()
 }
 
-// UpdateMenu doc
+// Update doc
 //
 //	@tags			菜单
 //	@Summary		修改菜单
@@ -163,7 +169,7 @@ func CreateMenu(c *gin.Context) {
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
 //	@Router			/api/v1/menu/update [put]
 //	@Security		ApiKeyAuth
-func UpdateMenu(c *gin.Context) {
+func (control *MenuController) Update(c *gin.Context) {
 	ctl := controller.New(c)
 
 	menu := requests.NewUpdateMenu()
@@ -181,7 +187,7 @@ func UpdateMenu(c *gin.Context) {
 	ctl.Success()
 }
 
-// DeleteMenu doc
+// Delete doc
 //
 //	@tags			菜单
 //	@Summary		删除菜单
@@ -192,7 +198,7 @@ func UpdateMenu(c *gin.Context) {
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
 //	@Router			/api/v1/menu/delete [delete]
 //	@Security		ApiKeyAuth
-func DeleteMenu(c *gin.Context) {
+func (control *MenuController) Delete(c *gin.Context) {
 	ctl := controller.New(c)
 
 	id := ctl.Param("id")

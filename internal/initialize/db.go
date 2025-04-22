@@ -2,8 +2,6 @@ package initialize
 
 import (
 	"lime/internal/app/admin/initialize"
-	"lime/internal/app/admin/logic"
-	adminModel "lime/internal/app/admin/model"
 	"lime/internal/global"
 	"lime/pkg/db"
 	"path/filepath"
@@ -21,19 +19,11 @@ func InitDB() {
 }
 
 func InitDATA(db *gorm.DB) {
-	db.AutoMigrate(&adminModel.User{})
-	db.AutoMigrate(&adminModel.Role{})
-	db.AutoMigrate(&adminModel.UserRole{})
-	db.AutoMigrate(&adminModel.RoleMenu{})
-	db.AutoMigrate(&adminModel.Menu{})
-	db.AutoMigrate(&adminModel.DictsInfo{})
-	db.AutoMigrate(&adminModel.DictDetail{})
-
+	initialize.InitAdminData(db)
 	// admin
-	logic.InitRoleMenus()
-	logic.InitUserRole()
-	logic.InitAdminUser()
-	initialize.InitAdminData()
+	// logic.InitRoleMenus()
+	// logic.InitUserRole()
+	// logic.InitAdminUser()
 }
 
 func FreeDB() {

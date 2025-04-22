@@ -8,6 +8,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type SettingsController struct{}
+
+func MakeSettingsController() SettingsController {
+	return SettingsController{}
+}
+
 // GetSystemSetting doc
 //
 //	@tags			系统设置
@@ -18,7 +24,7 @@ import (
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
 //	@Router			/api/v1/settings/system [get]
 //	@Security		ApiKeyAuth
-func GetSystemSettings(c *gin.Context) {
+func (control *SettingsController) GetSystemSettings(c *gin.Context) {
 	ctl := controller.New(c)
 	list := logic.GetSystemSettings()
 	ctl.SuccessData(list)
@@ -35,7 +41,7 @@ func GetSystemSettings(c *gin.Context) {
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
 //	@Router			/api/v1/settings/system [put]
 //	@Security		ApiKeyAuth
-func SetSystemSettings(c *gin.Context) {
+func (control *SettingsController) SetSystemSettings(c *gin.Context) {
 	ctl := controller.New(c)
 	data := requests.NewSettings()
 	err := ctl.Bind(&data)
@@ -59,7 +65,7 @@ func SetSystemSettings(c *gin.Context) {
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
 //	@Router			/api/v1/settings/logger [get]
 //	@Security		ApiKeyAuth
-func GetLoggerSettings(c *gin.Context) {
+func (control *SettingsController) GetLoggerSettings(c *gin.Context) {
 	ctl := controller.New(c)
 	list := logic.GetLoggerSettings()
 	ctl.SuccessData(list)
@@ -76,7 +82,7 @@ func GetLoggerSettings(c *gin.Context) {
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
 //	@Router			/api/v1/settings/logger [put]
 //	@Security		ApiKeyAuth
-func SetLoggerSettings(c *gin.Context) {
+func (control *SettingsController) SetLoggerSettings(c *gin.Context) {
 	ctl := controller.New(c)
 	data := requests.NewSettings()
 	err := ctl.Bind(&data)
