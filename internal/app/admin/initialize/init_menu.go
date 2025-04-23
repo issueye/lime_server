@@ -9,7 +9,7 @@ import (
 // 初始化菜单数据
 func InitMenus() {
 	menus := []model.MenuBase{
-		{Code: "1000", Name: "首页", Description: "首页", Frontpath: "/home", Order: 10, Visible: true, Icon: "Home", ParentCode: "", MenuType: model.EMT_MENU, IsLink: 0, IsCanNotRemove: 1},
+		{Code: "1000", Name: "首页", Description: "首页", Frontpath: "/home", Order: 10, Visible: true, Icon: "HomeFilled", ParentCode: "", MenuType: model.EMT_MENU, IsLink: 0, IsCanNotRemove: 1, IsHome: 1},
 		{Code: "9000", Name: "系统管理", Description: "系统管理", Frontpath: "/system", Order: 90, Visible: true, Icon: "Setting", ParentCode: "", MenuType: model.EMT_DIRECTORY, IsLink: 0, IsCanNotRemove: 1},
 		{Code: "9001", Name: "用户管理", Description: "用户管理", Frontpath: "/system/user", Order: 91, Visible: true, Icon: "User", ParentCode: "9000", MenuType: model.EMT_MENU, IsLink: 0, IsCanNotRemove: 1},
 		{Code: "9002", Name: "角色管理", Description: "角色管理", Frontpath: "/system/role", Order: 92, Visible: true, Icon: "Avatar", ParentCode: "9000", MenuType: model.EMT_MENU, IsLink: 0, IsCanNotRemove: 1},

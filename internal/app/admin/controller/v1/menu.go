@@ -196,7 +196,7 @@ func (control *MenuController) Update(c *gin.Context) {
 //	@Param			id		path	int	true	"菜单id"
 //	@Success		200	{object}	controller.Response	"code: 200 成功"
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
-//	@Router			/api/v1/menu/delete [delete]
+//	@Router			/api/v1/menu/delete/{id} [delete]
 //	@Security		ApiKeyAuth
 func (control *MenuController) Delete(c *gin.Context) {
 	ctl := controller.New(c)

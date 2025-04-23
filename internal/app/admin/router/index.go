@@ -53,10 +53,15 @@ func (router *Router) Register(r *gin.RouterGroup) {
 
 	role := r.Group("role").Use(middleware.CasbinHandler())
 	{
-		role.POST("list", router.RoleHandlers.Roles)          // 根据条件查询数据
-		role.PUT("update", router.RoleHandlers.Update)        // 修改角色信息
-		role.DELETE("delete/:id", router.RoleHandlers.Delete) // 删除角色信息
-		role.POST("add", router.RoleHandlers.Create)          // 创建角色信息
+		role.POST("list", router.RoleHandlers.Roles)                  // 根据条件查询数据
+		role.PUT("update", router.RoleHandlers.Update)                // 修改角色信息
+		role.DELETE("delete/:id", router.RoleHandlers.Delete)         // 删除角色信息
+		role.POST("add", router.RoleHandlers.Create)                  // 创建角色信息
+		role.POST("getApis", router.RoleHandlers.GetApis)             // 获取角色接口列表
+		role.POST("getNoHaveApis", router.RoleHandlers.GetNoHaveApis) // 获取角色未分配接口列表
+		role.POST("removeApi", router.RoleHandlers.RemoveApi)         // 移除角色接口
+		role.POST("addApi", router.RoleHandlers.AddApi)               // 添加角色接口
+		role.GET("freshCasbin", router.RoleHandlers.FreshCasbin)      // 刷新角色权限
 	}
 
 	menu := r.Group("menu").Use(middleware.CasbinHandler())

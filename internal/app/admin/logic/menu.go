@@ -202,7 +202,7 @@ func (lc *MenuLogic) Del(id uint) error {
 		}
 
 		menuSrv.Commit()
-		slog.Info("删除菜单成功", slog.Any("菜单", menu))
+		slog.Info("删除菜单成功", slog.Any("菜单名称", menu.Name), slog.String("菜单标识码", menu.Code))
 	}()
 
 	err = menuSrv.Delete(id)
@@ -229,42 +229,41 @@ func (lc *MenuLogic) GetMenuTree(Role_code string) ([]*model.Menu, error) {
 }
 
 func (lc *MenuLogic) MakeTree(list []*model.Menu) []*model.Menu {
-	findFirst := func(list []*model.Menu) []*model.Menu {
-		// 如果 parentCode 为空，则返回第一个元素
-		if len(list) == 0 {
-			return nil
-		}
-
-		rtnList := make([]*model.Menu, 0)
-
-		for _, menu := range list {
-			if menu.ParentCode == "" {
-				rtnList = append(rtnList, menu)
-			}
-		}
-		return rtnList
-	}
-
-	findChild := func(list []*model.Menu, parentCode string) []*model.Menu {
-		// 查找所有子菜单
-		rtnList := make([]*model.Menu, 0)
-
-		for _, menu := range list {
-			if menu.ParentCode == parentCode {
-				rtnList = append(rtnList, menu)
-			}
-		}
-		return rtnList
-	}
-
 	fList := findFirst(list)
-
 	for _, menu := range fList {
-		data := findChild(list, menu.Code)
+		data := findChildren(list, menu.Code)
 		menu.Children = data
 	}
 
 	return fList
+}
+
+func findFirst(list []*model.Menu) []*model.Menu {
+	// 如果 parentCode 为空，则返回第一个元素
+	if len(list) == 0 {
+		return nil
+	}
+
+	rtnList := make([]*model.Menu, 0)
+
+	for _, menu := range list {
+		if menu.ParentCode == "" {
+			rtnList = append(rtnList, menu)
+		}
+	}
+	return rtnList
+}
+
+func findChildren(menus []*model.Menu, code string) []*model.Menu {
+	children := make([]*model.Menu, 0)
+	for _, menu := range menus {
+		if menu.ParentCode == code {
+			menu.Children = findChildren(menus, menu.Code)
+			children = append(children, menu)
+		}
+	}
+
+	return children
 }
 
 func (lc *MenuLogic) MenuIsNotExistAdd(menu *model.Menu) {

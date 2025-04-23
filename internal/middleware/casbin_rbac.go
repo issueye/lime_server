@@ -23,7 +23,8 @@ func CasbinHandler() gin.HandlerFunc {
 		}
 
 		//获取请求的PATH
-		path := c.Request.URL.Path
+		path := c.FullPath()
+		fmt.Println("path:", path)
 		obj := strings.TrimPrefix(path, "/api/v1")
 		// 获取请求方法
 		act := c.Request.Method

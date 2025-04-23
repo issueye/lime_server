@@ -87,3 +87,22 @@ type Settings struct {
 func NewSettings() []*Settings {
 	return []*Settings{}
 }
+
+type RoleApi struct {
+	RoleCode string `json:"role_code" binding:"required"`
+	Path     string `json:"path" binding:"required"`
+	Method   string `json:"method" binding:"required"`
+}
+
+func NewRoleApi() *RoleApi {
+	return &RoleApi{}
+}
+
+type RoleQryApi struct {
+	RoleCode string `json:"role_code" label:"角色编码" binding:"required"`
+	Keyword  string `json:"keyword" label:"关键词" form:"keyword"`
+}
+
+func NewRoleQryApi() *RoleQryApi {
+	return &RoleQryApi{}
+}

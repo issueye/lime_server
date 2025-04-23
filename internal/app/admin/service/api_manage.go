@@ -47,3 +47,20 @@ func (srv *ApiManage) GetList(condition *commonModel.PageQuery[*requests.QueryAp
 		return d
 	})
 }
+
+// ListApiInfo
+// 根据条件查询列表
+func (srv *ApiManage) ListFilter(condition *requests.RoleQryApi) ([]*model.ApiInfo, error) {
+	return service.GetDatas[model.ApiInfo](condition, func(qu *requests.RoleQryApi, d *gorm.DB) *gorm.DB {
+		if qu.Keyword != "" {
+			d = d.Where("title like ? or path like ? or method like ? or api_group like ?",
+				"%"+qu.Keyword+"%",
+				"%"+qu.Keyword+"%",
+				"%"+qu.Keyword+"%",
+				"%"+qu.Keyword+"%",
+			)
+		}
+
+		return d
+	})
+}

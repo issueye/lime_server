@@ -3,7 +3,6 @@ package service
 import (
 	"errors"
 	"lime/internal/app/admin/requests"
-	"strconv"
 	"sync"
 
 	"gorm.io/gorm"
@@ -22,17 +21,16 @@ func NewCasbin(db *gorm.DB) *Casbin {
 	return &Casbin{db: db}
 }
 
-func (srv *Casbin) UpdateCasbin(roleID uint, casbinInfos []requests.CasbinInfo) error {
-	id := strconv.Itoa(int(roleID))
-	srv.ClearCasbin(0, id)
+func (srv *Casbin) UpdateCasbin(roleCode string, casbinInfos []requests.CasbinInfo) error {
+	srv.ClearCasbin(0, roleCode)
 	rules := [][]string{}
 	//做权限去重处理
 	deduplicateMap := make(map[string]bool)
 	for _, v := range casbinInfos {
-		key := id + v.Path + v.Method
+		key := roleCode + v.Path + v.Method
 		if _, ok := deduplicateMap[key]; !ok {
 			deduplicateMap[key] = true
-			rules = append(rules, []string{id, v.Path, v.Method})
+			rules = append(rules, []string{roleCode, v.Path, v.Method})
 		}
 	}
 	if len(rules) == 0 {
@@ -63,10 +61,9 @@ func (srv *Casbin) UpdateCasbinApi(oldPath string, newPath string, oldMethod str
 	return err
 }
 
-func (srv *Casbin) GetPolicyPathByRoleID(roleID uint) ([]requests.CasbinInfo, error) {
+func (srv *Casbin) GetPolicyPathByRoleCode(roleCode string) ([]requests.CasbinInfo, error) {
 	e := srv.Casbin()
-	id := strconv.Itoa(int(roleID))
-	list, err := e.GetFilteredPolicy(0, id)
+	list, err := e.GetFilteredPolicy(0, roleCode)
 	if err != nil {
 		return nil, err
 	}
@@ -81,25 +78,56 @@ func (srv *Casbin) GetPolicyPathByRoleID(roleID uint) ([]requests.CasbinInfo, er
 	return pathMaps, nil
 }
 
+func (srv *Casbin) GetRoleApis(roleCode string) ([]requests.CasbinInfo, error) {
+	list := make([]gormadapter.CasbinRule, 0)
+	err := srv.db.Model(&gormadapter.CasbinRule{}).Where("v0 =?", roleCode).Find(&list).Error
+	if err != nil {
+		return nil, err
+	}
+
+	listMap := make([]requests.CasbinInfo, len(list))
+	for index, v := range list {
+		listMap[index] = requests.CasbinInfo{
+			Path:   v.V1,
+			Method: v.V2,
+		}
+	}
+
+	return listMap, err
+}
+
 func (srv *Casbin) ClearCasbin(v int, p ...string) bool {
 	e := srv.Casbin()
 	success, _ := e.RemoveFilteredPolicy(v, p...)
 	return success
 }
 
-func (srv *Casbin) RemoveFilteredPolicy(db *gorm.DB, roleID string) error {
-	return db.Delete(&gormadapter.CasbinRule{}, "v0 = ?", roleID).Error
+func (srv *Casbin) RemoveFilteredPolicy(roleCode string) error {
+	return srv.db.Delete(&gormadapter.CasbinRule{}, "v0 = ?", roleCode).Error
 }
 
-func (srv *Casbin) SyncPolicy(db *gorm.DB, roleID string, rules [][]string) error {
-	err := srv.RemoveFilteredPolicy(db, roleID)
+func (srv *Casbin) RemoveRoleApi(roleCode string, path string, method string) error {
+	return srv.db.Delete(&gormadapter.CasbinRule{}, "v0 =? AND v1 =? AND v2 =?", roleCode, path, method).Error
+}
+
+func (srv *Casbin) AddRoleApi(roleCode string, path string, method string) error {
+	return srv.db.Create(&gormadapter.CasbinRule{
+		Ptype: "p",
+		V0:    roleCode,
+		V1:    path,
+		V2:    method,
+	}).Error
+}
+
+func (srv *Casbin) SyncPolicy(roleCode string, rules [][]string) error {
+	err := srv.RemoveFilteredPolicy(roleCode)
 	if err != nil {
 		return err
 	}
-	return srv.AddPolicies(db, rules)
+	return srv.AddPolicies(rules)
 }
 
-func (srv *Casbin) AddPolicies(db *gorm.DB, rules [][]string) error {
+func (srv *Casbin) AddPolicies(rules [][]string) error {
 	var casbinRules []gormadapter.CasbinRule
 	for i := range rules {
 		casbinRules = append(casbinRules, gormadapter.CasbinRule{
@@ -109,7 +137,7 @@ func (srv *Casbin) AddPolicies(db *gorm.DB, rules [][]string) error {
 			V2:    rules[i][2],
 		})
 	}
-	return db.Create(&casbinRules).Error
+	return srv.db.Create(&casbinRules).Error
 }
 
 func (srv *Casbin) FreshCasbin() (err error) {

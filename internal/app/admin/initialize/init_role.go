@@ -4,6 +4,7 @@ import (
 	"context"
 	"lime/internal/app/admin/model"
 	"lime/internal/app/admin/service"
+	"lime/internal/common"
 	"lime/internal/global"
 	"log/slog"
 
@@ -13,7 +14,7 @@ import (
 // 初始化角色数据
 func InitRoles() {
 	Roles := []model.RoleBase{
-		{Code: "9001", Name: "管理员", IsCanNotRemove: 1, Remark: "系统生成"},
+		{Code: "9999", Name: "管理员", IsCanNotRemove: 1, Remark: "系统生成"},
 	}
 
 	for _, Role := range Roles {
@@ -43,7 +44,7 @@ func RoleIsNotExistAdd(Role *model.Role) {
 // 初始化角色与用户关联
 func InitUserRole() {
 	userRole := []*model.UserRole{
-		{UserID: 1, RoleCode: "9001"},
+		{UserID: 1, RoleCode: "9999"},
 	}
 
 	for _, ur := range userRole {
@@ -71,11 +72,11 @@ func URIsNotExistAdd(ur *model.UserRole) {
 // 初始化角色与菜单关联
 func InitRoleMenus() {
 	rms := []*model.RoleMenu{
-		{RoleCode: "9001", MenuCode: "9000"},
-		{RoleCode: "9001", MenuCode: "9001"},
-		{RoleCode: "9001", MenuCode: "9002"},
-		{RoleCode: "9001", MenuCode: "9003"},
-		{RoleCode: "9001", MenuCode: "9004"},
+		{RoleCode: "9999", MenuCode: "9000"},
+		{RoleCode: "9999", MenuCode: "9001"},
+		{RoleCode: "9999", MenuCode: "9002"},
+		{RoleCode: "9999", MenuCode: "9003"},
+		{RoleCode: "9999", MenuCode: "9004"},
 	}
 
 	for _, rm := range rms {
@@ -102,46 +103,57 @@ func RMIsNotExistAdd(rm *model.RoleMenu) {
 
 func InitRoleApi() {
 	apis := []adapter.CasbinRule{
-		{Ptype: "p", V0: "9001", V1: "/auth/login", V2: "POST", V3: "", V4: "", V5: ""},
-		{Ptype: "p", V0: "9001", V1: "/auth/logout", V2: "POST", V3: "", V4: "", V5: ""},
-		{Ptype: "p", V0: "9001", V1: "/auth/refresh", V2: "GET", V3: "", V4: "", V5: ""},
-
-		{Ptype: "p", V0: "9001", V1: "/admin/userInfo", V2: "GET", V3: "", V4: "", V5: ""},
-		{Ptype: "p", V0: "9001", V1: "/admin/upload", V2: "POST", V3: "", V4: "", V5: ""},
-		{Ptype: "p", V0: "9001", V1: "/admin/updateuserinfo", V2: "POST", V3: "", V4: "", V5: ""},
-		{Ptype: "p", V0: "9001", V1: "/admin/updatepassword", V2: "POST", V3: "", V4: "", V5: ""},
-
-		{Ptype: "p", V0: "9001", V1: "/user/list", V2: "POST", V3: "", V4: "", V5: ""},
-		{Ptype: "p", V0: "9001", V1: "/user/update", V2: "PUT", V3: "", V4: "", V5: ""},
-		{Ptype: "p", V0: "9001", V1: "/user/delete/:id", V2: "DELETE", V3: "", V4: "", V5: ""},
-		{Ptype: "p", V0: "9001", V1: "/user/add", V2: "POST", V3: "", V4: "", V5: ""},
-
-		{Ptype: "p", V0: "9001", V1: "/role/list", V2: "POST", V3: "", V4: "", V5: ""},
-		{Ptype: "p", V0: "9001", V1: "/role/update", V2: "PUT", V3: "", V4: "", V5: ""},
-		{Ptype: "p", V0: "9001", V1: "/role/delete/:id", V2: "DELETE", V3: "", V4: "", V5: ""},
-		{Ptype: "p", V0: "9001", V1: "/role/add", V2: "POST", V3: "", V4: "", V5: ""},
-
-		{Ptype: "p", V0: "9001", V1: "/menu/list", V2: "POST", V3: "", V4: "", V5: ""},
-		{Ptype: "p", V0: "9001", V1: "/menu/getAll", V2: "POST", V3: "", V4: "", V5: ""},
-		{Ptype: "p", V0: "9001", V1: "/menu/roleMenus/:code", V2: "POST", V3: "", V4: "", V5: ""},
-		{Ptype: "p", V0: "9001", V1: "/menu/saveRoleMenus/:code", V2: "POST", V3: "", V4: "", V5: ""},
-		{Ptype: "p", V0: "9001", V1: "/menu/update", V2: "POST", V3: "", V4: "", V5: ""},
-		{Ptype: "p", V0: "9001", V1: "/menu/delete/:code", V2: "POST", V3: "", V4: "", V5: ""},
-		{Ptype: "p", V0: "9001", V1: "/menu/add", V2: "POST", V3: "", V4: "", V5: ""},
-
-		{Ptype: "p", V0: "9001", V1: "/settings/system", V2: "GET", V3: "", V4: "", V5: ""},
-		{Ptype: "p", V0: "9001", V1: "/settings/system", V2: "PUT", V3: "", V4: "", V5: ""},
-		{Ptype: "p", V0: "9001", V1: "/settings/logger", V2: "GET", V3: "", V4: "", V5: ""},
-		{Ptype: "p", V0: "9001", V1: "/settings/logger", V2: "PUT", V3: "", V4: "", V5: ""},
-
-		{Ptype: "p", V0: "9001", V1: "/dict_mana", V2: "POST", V3: "", V4: "", V5: ""},
-		{Ptype: "p", V0: "9001", V1: "/dict_mana", V2: "PUT", V3: "", V4: "", V5: ""},
-		{Ptype: "p", V0: "9001", V1: "/dict_mana/list", V2: "POST", V3: "", V4: "", V5: ""},
-		{Ptype: "p", V0: "9001", V1: "/dict_mana/:id", V2: "DELETE", V3: "", V4: "", V5: ""},
-		{Ptype: "p", V0: "9001", V1: "/dict_mana/detail", V2: "POST", V3: "", V4: "", V5: ""},
-		{Ptype: "p", V0: "9001", V1: "/dict_mana/details", V2: "POST", V3: "", V4: "", V5: ""},
-		{Ptype: "p", V0: "9001", V1: "/dict_mana/detail/:id", V2: "DELETE", V3: "", V4: "", V5: ""},
-		{Ptype: "p", V0: "9001", V1: "/dict_mana/:id/details", V2: "GET", V3: "", V4: "", V5: ""},
+		// 基础接口
+		{Ptype: "p", V0: "9999", V1: "/auth/login", V2: common.HTTP_POST.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/auth/logout", V2: common.HTTP_POST.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/auth/refresh", V2: common.HTTP_GET.String(), V3: "", V4: "", V5: ""},
+		// 用户信息
+		{Ptype: "p", V0: "9999", V1: "/admin/userInfo", V2: common.HTTP_GET.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/admin/upload", V2: common.HTTP_POST.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/admin/updateuserinfo", V2: common.HTTP_POST.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/admin/updatepassword", V2: common.HTTP_POST.String(), V3: "", V4: "", V5: ""},
+		// 用户管理
+		{Ptype: "p", V0: "9999", V1: "/user/list", V2: common.HTTP_POST.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/user/update", V2: common.HTTP_PUT.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/user/delete/:id", V2: common.HTTP_DELETE.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/user/add", V2: common.HTTP_POST.String(), V3: "", V4: "", V5: ""},
+		// 角色管理
+		{Ptype: "p", V0: "9999", V1: "/role/list", V2: common.HTTP_POST.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/role/update", V2: common.HTTP_PUT.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/role/delete/:id", V2: common.HTTP_DELETE.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/role/add", V2: common.HTTP_POST.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/role/getApis", V2: common.HTTP_POST.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/role/getNoHaveApis", V2: common.HTTP_POST.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/role/removeApi", V2: common.HTTP_POST.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/role/addApi", V2: common.HTTP_POST.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/role/freshCasbin", V2: common.HTTP_GET.String(), V3: "", V4: "", V5: ""},
+		// 菜单管理
+		{Ptype: "p", V0: "9999", V1: "/menu/list", V2: common.HTTP_POST.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/menu/getAll", V2: common.HTTP_GET.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/menu/roleMenus/:code", V2: common.HTTP_GET.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/menu/saveRoleMenus/:code", V2: common.HTTP_POST.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/menu/update", V2: common.HTTP_PUT.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/menu/delete/:code", V2: common.HTTP_DELETE.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/menu/add", V2: common.HTTP_POST.String(), V3: "", V4: "", V5: ""},
+		// 系统设置
+		{Ptype: "p", V0: "9999", V1: "/settings/system", V2: common.HTTP_GET.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/settings/system", V2: common.HTTP_PUT.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/settings/logger", V2: common.HTTP_GET.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/settings/logger", V2: common.HTTP_PUT.String(), V3: "", V4: "", V5: ""},
+		// 字典管理
+		{Ptype: "p", V0: "9999", V1: "/dict_mana", V2: common.HTTP_POST.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/dict_mana", V2: common.HTTP_PUT.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/dict_mana/list", V2: common.HTTP_POST.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/dict_mana/:id", V2: common.HTTP_DELETE.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/dict_mana/detail", V2: common.HTTP_POST.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/dict_mana/details", V2: common.HTTP_POST.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/dict_mana/detail/:id", V2: common.HTTP_DELETE.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/dict_mana/:id/details", V2: common.HTTP_GET.String(), V3: "", V4: "", V5: ""},
+		// 接口管理
+		{Ptype: "p", V0: "9999", V1: "/api_manage", V2: common.HTTP_POST.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/api_manage", V2: common.HTTP_PUT.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/api_manage/list", V2: common.HTTP_POST.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/api_manage/:id", V2: common.HTTP_DELETE.String(), V3: "", V4: "", V5: ""},
 	}
 
 	for _, api := range apis {

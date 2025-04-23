@@ -6,7 +6,7 @@ type Menu struct {
 	model.BaseModel
 	MenuBase
 	IsHave   bool    `gorm:"column:is_have;comment:是否可见;" json:"is_have"` // 是否有权限
-	Children []*Menu `gorm:"-" json:"child"`
+	Children []*Menu `gorm:"-" json:"children"`                           // 子菜单
 }
 
 type EnumMenuType uint

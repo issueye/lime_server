@@ -107,6 +107,23 @@ func (b *BaseService[T]) GetByMap(conditions map[string]any) (*T, error) {
 	return data, err
 }
 
+type Condition struct {
+	Field string // 字段
+	Value any    // 值
+	Exp   string // 表达式
+}
+
+func (b *BaseService[T]) GetDatasByFields(conditions []Condition) ([]*T, error) {
+	data := make([]*T, 0)
+	qry := b.GetDB().Model(new(T))
+	for _, v := range conditions {
+		qry = qry.Where(v.Field+v.Exp+" ?", v.Value)
+	}
+
+	err := qry.Find(&data).Error
+	return data, err
+}
+
 // 根据字段查询
 func (b *BaseService[T]) GetDatasByField(field string, value any) ([]*T, error) {
 	data := make([]*T, 0)
