@@ -6,6 +6,7 @@ import (
 	"lime/internal/app/admin/response"
 	"lime/internal/common"
 	"lime/internal/common/controller"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -65,7 +66,12 @@ func RefreshToken(c *gin.Context) {
 	}
 
 	res := new(response.Auth)
-	res.ID = token.ID
+	userid, err := strconv.Atoi(token.UserID)
+	if err != nil {
+		ctl.FailWithError(err)
+		return
+	}
+	res.ID = uint(userid)
 	res.User = token.Username
 	res.Token = token.Token
 

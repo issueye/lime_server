@@ -10,7 +10,7 @@ import (
 
 type Store struct {
 	Token    string `json:"token"`
-	UserID   uint   `json:"user_id"`
+	UserID   string `json:"user_id"`
 	RoleCode string `json:"role_code"`
 }
 
@@ -34,16 +34,16 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		if info.ID > 0 {
+		if info.RoleCode == "" {
 			// 如果 tokenStore 中不存在该 token，则添加到 tokenStore 中
 			if _, ok := tokenStore[tokenString]; !ok {
 				tokenStore[tokenString] = Store{
 					Token:  tokenString,
-					UserID: info.ID,
+					UserID: info.UserID,
 				}
 			}
 
-			c.Set("user_id", info.ID)
+			c.Set("user_id", info.UserID)
 			c.Next()
 		} else {
 			ctl.FailWithCode(http.StatusUnauthorized, "无效的 token")

@@ -10,12 +10,12 @@ type ApiInfo struct {
 type EnumApiMethod string
 
 const (
-	EnumApiMethodGet     EnumApiMethod = "GET"
-	EnumApiMethodPost    EnumApiMethod = "POST"
-	EnumApiMethodPut     EnumApiMethod = "PUT"
-	EnumApiMethodDelete  EnumApiMethod = "DELETE"
-	EnumApiMethodOptions EnumApiMethod = "OPTIONS"
-	EnumApiMethodHead    EnumApiMethod = "HEAD"
+	HTTP_GET     EnumApiMethod = "GET"
+	HTTP_POST    EnumApiMethod = "POST"
+	HTTP_PUT     EnumApiMethod = "PUT"
+	HTTP_DELETE  EnumApiMethod = "DELETE"
+	HTTP_OPTIONS EnumApiMethod = "OPTIONS"
+	HTTP_HEAD    EnumApiMethod = "HEAD"
 )
 
 type ApiBase struct {

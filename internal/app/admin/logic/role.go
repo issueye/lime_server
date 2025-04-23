@@ -6,7 +6,6 @@ import (
 	"lime/internal/app/admin/requests"
 	"lime/internal/app/admin/service"
 	commonModel "lime/internal/common/model"
-	"lime/internal/global"
 )
 
 type Role struct{}
@@ -63,21 +62,4 @@ func (lc *Role) ListRole(condition *commonModel.PageQuery[*requests.QueryRole]) 
 // 删除数据
 func (lc *Role) DeleteRole(id uint) error {
 	return service.NewRole().Delete(id)
-}
-
-func (lc *Role) RoleIsNotExistAdd(Role *model.Role) {
-	roleSrv := service.NewRole()
-	info, err := roleSrv.GetByField("code", Role.Code)
-	if err != nil {
-		global.Logger.Sugar().Errorf("查询角色失败，失败原因：%s", err.Error())
-		return
-	}
-
-	if info.ID == 0 {
-		err = roleSrv.Create(Role)
-		if err != nil {
-			global.Logger.Sugar().Errorf("添加角色失败，失败原因：%s", err.Error())
-			return
-		}
-	}
 }

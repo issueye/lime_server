@@ -1,11 +1,11 @@
 package middleware
 
 import (
+	"fmt"
 	"lime/internal/app/admin/service"
 	"lime/internal/common"
 	"lime/internal/common/controller"
 	"lime/internal/global"
-	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -14,9 +14,10 @@ import (
 // CasbinHandler 拦截器
 func CasbinHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		info, err := common.ParseToken(c.GetHeader("Authorization"))
+		authToken := c.Request.Header.Get("Authorization")
+		info, err := common.ParseToken(authToken)
 		if err != nil {
-			controller.New(c).FailWithCode(401, "无效的 token")
+			controller.New(c).Unauthorized("无效的 token")
 			c.Abort()
 			return
 		}
@@ -27,11 +28,12 @@ func CasbinHandler() gin.HandlerFunc {
 		// 获取请求方法
 		act := c.Request.Method
 		// 获取用户的角色
-		sub := strconv.Itoa(int(info.ID))
+		sub := info.RoleCode
 		e := service.NewCasbin(global.DB).Casbin() // 判断策略中是否存在
 		success, _ := e.Enforce(sub, obj, act)
 		if !success {
-			controller.New(c).Forbidden("权限不足")
+			msg := fmt.Sprintf("%s 无权访问 %s", sub, obj)
+			controller.New(c).Forbidden(msg)
 			c.Abort()
 			return
 		}

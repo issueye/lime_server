@@ -7,22 +7,23 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type TokenInfo struct {
-	ID       uint   `json:"id"`
+	UserID   string `json:"user_id"`
 	Username string `json:"username"`
-	RoleID   uint   `json:"role_id"`
+	RoleCode string `json:"role_code"`
 	Token    string `json:"token"`
 }
 
-func MakeToken(ID uint, roleID uint, name string) (string, error) {
+func MakeToken(userID string, roleCode string, name string) (string, error) {
 	// 生成 JWT 令牌
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_id":  ID,
-		"role_id":  roleID,
-		"username": name,
-		"exp":      time.Now().Add(time.Hour * 24).Unix(), // 设置过期时间，这里示例为1天
+		"user_id":   userID,
+		"role_code": roleCode,
+		"username":  name,
+		"exp":       time.Now().Add(time.Hour * 24).Unix(), // 设置过期时间，这里示例为1天
 	})
 	// 这里的 secretKey 应该妥善保管，例如从环境变量中获取等
 	key := config.GetParam(config.JWT, "jwt-secret-key", "pkkwmjjum5hvfqybnbxo97ol2spriy49").String()
@@ -59,11 +60,11 @@ func ParseToken(tokenString string) (TokenInfo, error) {
 
 	// 获取用户 ID 和用户名
 	mc := token.Claims.(jwt.MapClaims)
-	userID := mc["user_id"].(float64)
-	roleID := mc["role_id"].(float64)
+	userID := mc["user_id"].(string)
+	roleCode := mc["role_code"].(string)
 	username := mc["username"].(string)
 
-	return TokenInfo{ID: uint(userID), RoleID: uint(roleID), Username: username}, nil
+	return TokenInfo{UserID: userID, RoleCode: roleCode, Username: username}, nil
 }
 
 func RefreshToken(oldToken string) (TokenInfo, error) {
@@ -73,11 +74,19 @@ func RefreshToken(oldToken string) (TokenInfo, error) {
 	}
 
 	// 生成一个新的 JWT 令牌
-	signedToken, err := MakeToken(token.ID, token.RoleID, token.Username)
+	signedToken, err := MakeToken(token.UserID, token.RoleCode, token.Username)
 	if err != nil {
 		return TokenInfo{}, err
 	}
 
 	token.Token = signedToken
 	return token, nil
+}
+
+func MakePassword(password string) (string, error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+	return string(hashedPassword), nil
 }
