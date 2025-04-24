@@ -25,6 +25,9 @@ func InitAdminData(db *gorm.DB) {
 	InitUserRole()
 	InitRoleMenus()
 	InitRoleApi()
+
+	// 初始化字典
+	InitDictData()
 }
 
 func InitAutoMigrate(db *gorm.DB) {

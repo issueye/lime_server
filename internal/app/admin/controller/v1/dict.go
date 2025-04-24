@@ -37,7 +37,7 @@ func (control *DictController) CreateDicts(c *gin.Context) {
 		return
 	}
 
-	err = logic.CreateDicts(req)
+	err = logic.NewDictsLogic().CreateDicts(req)
 	if err != nil {
 		ctl.FailWithError(err)
 		return
@@ -68,7 +68,7 @@ func (control *DictController) UpdateDicts(c *gin.Context) {
 		return
 	}
 
-	err = logic.UpdateDicts(req)
+	err = logic.NewDictsLogic().UpdateDicts(req)
 	if err != nil {
 		ctl.FailWithError(err)
 		return
@@ -103,7 +103,7 @@ func (control *DictController) DeleteDicts(c *gin.Context) {
 		return
 	}
 
-	err = logic.DeleteDicts(uint(i))
+	err = logic.NewDictsLogic().DeleteDicts(uint(i))
 	if err != nil {
 		ctl.FailWithError(err)
 		return
@@ -134,7 +134,7 @@ func (control *DictController) DictsList(c *gin.Context) {
 		return
 	}
 
-	list, err := logic.DictsList(req)
+	list, err := logic.NewDictsLogic().DictsList(req)
 	if err != nil {
 		ctl.FailWithError(err)
 		return
@@ -169,7 +169,7 @@ func (control *DictController) GetDicts(c *gin.Context) {
 		return
 	}
 
-	info, err := logic.GetDicts(uint(i))
+	info, err := logic.NewDictsLogic().GetDicts(uint(i))
 	if err != nil {
 		ctl.FailWithError(err)
 		return
@@ -200,7 +200,7 @@ func (control *DictController) ListDetail(c *gin.Context) {
 		return
 	}
 
-	list, err := logic.ListDetail(req)
+	list, err := logic.NewDictsLogic().ListDetail(req)
 	if err != nil {
 		ctl.FailWithError(err)
 		return
@@ -230,7 +230,7 @@ func (control *DictController) SaveDetail(c *gin.Context) {
 		return
 	}
 
-	err = logic.SaveDetail(req)
+	err = logic.NewDictsLogic().SaveDetail(req)
 	if err != nil {
 		ctl.FailWithError(err)
 		return
@@ -265,7 +265,7 @@ func (control *DictController) DelDetail(c *gin.Context) {
 		return
 	}
 
-	err = logic.DelDetail(uint(i))
+	err = logic.NewDictsLogic().DelDetail(uint(i))
 	if err != nil {
 		ctl.FailWithError(err)
 		return
@@ -294,7 +294,7 @@ func (control *DictController) GetDictDetails(c *gin.Context) {
 		return
 	}
 
-	dictInfo, err := logic.GetDictsByCode(id)
+	dictInfo, err := logic.NewDictsLogic().GetDictsByCode(id)
 	if err != nil {
 		ctl.FailWithError(err)
 		return
@@ -303,7 +303,7 @@ func (control *DictController) GetDictDetails(c *gin.Context) {
 	condition := requests.NewQueryDictsDetail()
 	condition.Condition.DictCode = dictInfo.Code
 
-	list, err := logic.ListDetail(condition)
+	list, err := logic.NewDictsLogic().ListDetail(condition)
 	if err != nil {
 		ctl.FailWithError(err)
 		return

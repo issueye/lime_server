@@ -42,7 +42,7 @@ func NewDictDetail(args ...any) *DictDetail {
 }
 
 func (r *DictDetail) Save(data *model.DictDetail) error {
-	return r.GetDB().Model(&model.DictDetail{}).Where("id = ?", data.ID).Save(data).Error
+	return r.GetDB().Model(&model.DictDetail{}).Where("key = ?", data.Key).Save(data).Error
 }
 
 func (r *DictDetail) List(condition *commonModel.PageQuery[*requests.QueryDictsDetail]) (*commonModel.ResPage[model.DictDetail], error) {

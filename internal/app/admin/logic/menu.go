@@ -268,7 +268,6 @@ func findChildren(menus []*model.Menu, code string) []*model.Menu {
 
 func (lc *MenuLogic) MenuIsNotExistAdd(menu *model.Menu) {
 	menuSrv := service.NewMenu()
-
 	isHave, err := menuSrv.CheckMenuExist(menu)
 	if err != nil {
 		global.Logger.Sugar().Errorf("检查菜单是否存在失败: %s", err.Error())
