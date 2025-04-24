@@ -92,7 +92,7 @@ func (router *Router) Register(r *gin.RouterGroup) {
 		dict_mana.GET(":id", router.DictHandlers.GetDicts)               // 查询字典
 		dict_mana.POST("detail", router.DictHandlers.SaveDetail)         // 保存字典详情
 		dict_mana.POST("details", router.DictHandlers.ListDetail)        // 查询字典详情列表
-		dict_mana.DELETE("detail/:id", router.DictHandlers.DelDetail)    // 删除字典详情
+		dict_mana.DELETE("detail/:key", router.DictHandlers.DelDetail)   // 删除字典详情
 		dict_mana.GET(":id/details", router.DictHandlers.GetDictDetails) // 查询字典详情
 	}
 

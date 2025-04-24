@@ -23,8 +23,13 @@ func InitDictData() {
 			Code: "api_group",
 			Name: "API分组",
 			Details: []model.DictDetail{
-				{Key: "sys", Value: "系统管理", Description: "系统管理", Extra: ""},
-				{Key: "user", Value: "用户管理", Description: "用户管理", Extra: ""},
+				{Key: "base_api", Value: "基础接口", Description: "基础接口", Extra: ""},
+				{Key: "user_manage", Value: "用户管理", Description: "用户管理", Extra: ""},
+				{Key: "role_manage", Value: "角色管理", Description: "角色管理", Extra: ""},
+				{Key: "menu_manage", Value: "菜单管理", Description: "菜单管理", Extra: ""},
+				{Key: "sys_setting", Value: "系统设置", Description: "系统设置", Extra: ""},
+				{Key: "dict_manage", Value: "字典管理", Description: "字典管理", Extra: ""},
+				{Key: "api_manage", Value: "接口管理", Description: "接口管理", Extra: ""},
 			},
 		},
 		{

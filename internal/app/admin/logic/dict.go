@@ -70,8 +70,8 @@ func (lc *DictsLogic) SaveDetail(req *requests.SaveDetail) error {
 	return service.NewDictDetail().Save(&req.DictDetail)
 }
 
-func (lc *DictsLogic) DelDetail(id uint) error {
-	return service.NewDictDetail().Delete(id)
+func (lc *DictsLogic) DelDetail(key string) error {
+	return service.NewDictDetail().DeleteByFields(map[string]any{"key": key})
 }
 
 func (lc *DictsLogic) ListDetail(condition *commonModel.PageQuery[*requests.QueryDictsDetail]) (*commonModel.ResPage[model.DictDetail], error) {
@@ -90,29 +90,10 @@ func (lc *DictsLogic) IsNotExistAdd(req model.DictsInfo) error {
 		return fmt.Errorf("字典编码[%s]已存在", req.Code)
 	}
 
-	dictsSrv.Begin()
-	defer func() {
-		if err != nil {
-			dictsSrv.Rollback()
-			return
-		}
-
-		dictsSrv.Commit()
-	}()
-
 	// 创建字典
 	err = dictsSrv.Create(&req)
 	if err != nil {
 		return err
-	}
-	// 创建字典明细
-	detailSrv := service.NewDictDetail(dictsSrv.GetDB())
-	for _, detail := range req.Details {
-		detail.DictCode = req.Code
-		err = detailSrv.Create(&detail)
-		if err != nil {
-			return err
-		}
 	}
 
 	return nil

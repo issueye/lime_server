@@ -245,27 +245,21 @@ func (control *DictController) SaveDetail(c *gin.Context) {
 //	@Summary		删除字典明细
 //	@Description	删除字典明细
 //	@Produce		json
-//	@Param			id		path	int	true	"字典信息id"
+//	@Param			key		path	string	true	"字典信息id"
 //	@Success		200	{object}	controller.Response	"code: 200 成功"
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
-//	@Router			/api/v1/dict_mana/detail/{id} [delete]
+//	@Router			/api/v1/dict_mana/detail/{key} [delete]
 //	@Security		ApiKeyAuth
 func (control *DictController) DelDetail(c *gin.Context) {
 	ctl := controller.New(c)
 
-	id := c.Param("id")
-	if id == "" {
-		ctl.Fail("id不能为空")
+	key := c.Param("key")
+	if key == "" {
+		ctl.Fail("key不能为空")
 		return
 	}
 
-	i, err := strconv.Atoi(id)
-	if err != nil {
-		ctl.FailWithError(err)
-		return
-	}
-
-	err = logic.NewDictsLogic().DelDetail(uint(i))
+	err := logic.NewDictsLogic().DelDetail(key)
 	if err != nil {
 		ctl.FailWithError(err)
 		return
