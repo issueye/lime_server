@@ -68,10 +68,11 @@ func NewCreateRole() *CreateRole {
 }
 
 type UpdateRole struct {
-	Id     int    `json:"id" binding:"required"`
-	Code   string `json:"code" binding:"required"`
-	Name   string `json:"name" binding:"required"`
-	Remark string `json:"remark"`
+	Id        int      `json:"id" binding:"required"`
+	Code      string   `json:"code" binding:"required"`
+	Name      string   `json:"name" binding:"required"`
+	Remark    string   `json:"remark"`
+	MenuCodes []string `json:"menu_codes"`
 }
 
 func NewUpdateRole() *UpdateRole {

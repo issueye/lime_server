@@ -48,7 +48,46 @@ func (lc *Role) UpdateRole(r *requests.UpdateRole) error {
 	data["name"] = r.Name
 	data["remark"] = r.Remark
 
-	return service.NewRole().UpdateByMap(uint(r.Id), data)
+	srv := service.NewRole()
+	srv.Begin()
+
+	var err error
+	defer func() {
+		if err != nil {
+			srv.Rollback()
+			return
+		}
+
+		srv.Commit()
+	}()
+
+	err = srv.UpdateByMap(uint(r.Id), data)
+	if err != nil {
+		return err
+	}
+
+	roleMenuSrv := service.NewRoleMenu(srv)
+	// 删除角色的所有菜单
+	err = roleMenuSrv.DeleteByFields(map[string]any{"role_code": r.Code})
+	if err != nil {
+		return err
+	}
+
+	// 新增角色的菜单
+	datas := make([]model.RoleMenu, 0)
+	for _, v := range r.MenuCodes {
+		datas = append(datas, model.RoleMenu{
+			RoleCode: r.Code,
+			MenuCode: v,
+		})
+	}
+
+	err = roleMenuSrv.CreateBatch(datas)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // 根据ID查询数据
@@ -59,6 +98,10 @@ func (lc *Role) GetRoleById(id uint) (*model.Role, error) {
 // 根据条件查询数据
 func (lc *Role) ListRole(condition *commonModel.PageQuery[*requests.QueryRole]) (*commonModel.ResPage[model.Role], error) {
 	return service.NewRole().ListRole(condition)
+}
+
+func (lc *Role) List(condition *requests.QueryRole) ([]*model.Role, error) {
+	return service.NewRole().List(condition)
 }
 
 // 删除数据

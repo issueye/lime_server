@@ -17,6 +17,8 @@ func (u User) TableName() string { return "sys_user" }
 
 type Role struct {
 	model.BaseModel
+	// 角色菜单关系表 关联 sys_role_menus 表 角色 code 关联菜单 code
+	RoleMenus []*RoleMenu `gorm:"foreignKey:role_code;references:code;" json:"role_menus"`
 	RoleBase
 }
 

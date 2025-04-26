@@ -29,6 +29,20 @@ func (r *Role) ListRole(condition *commonModel.PageQuery[*requests.QueryRole]) (
 			d = d.Where("name like ? or remark like ?", "%"+qu.KeyWords+"%", "%"+qu.KeyWords+"%")
 		}
 
+		d.Preload("RoleMenus")
+
+		return d
+	})
+}
+
+func (r *Role) List(condition *requests.QueryRole) ([]*model.Role, error) {
+	return service.GetDatas[model.Role](condition, func(qu *requests.QueryRole, d *gorm.DB) *gorm.DB {
+		if qu.KeyWords != "" {
+			d = d.Where("name like ? or remark like ?", "%"+qu.KeyWords+"%", "%"+qu.KeyWords+"%")
+		}
+
+		d.Preload("RoleMenus")
+
 		return d
 	})
 }
