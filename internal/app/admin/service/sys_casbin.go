@@ -119,6 +119,26 @@ func (srv *Casbin) AddRoleApi(roleCode string, path string, method string) error
 	}).Error
 }
 
+type RoleApiData struct {
+	RoleCode string `json:"roleCode"`
+	Path     string `json:"path"`
+	Method   string `json:"method"`
+}
+
+func (srv *Casbin) AddRoleApis(datas []RoleApiData) error {
+	var casbinRules []gormadapter.CasbinRule
+	for i := range datas {
+		casbinRules = append(casbinRules, gormadapter.CasbinRule{
+			Ptype: "p",
+			V0:    datas[i].RoleCode,
+			V1:    datas[i].Path,
+			V2:    datas[i].Method,
+		})
+	}
+
+	return srv.db.Create(&casbinRules).Error
+}
+
 func (srv *Casbin) SyncPolicy(roleCode string, rules [][]string) error {
 	err := srv.RemoveFilteredPolicy(roleCode)
 	if err != nil {

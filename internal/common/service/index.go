@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"lime/internal/common/model"
 	"lime/internal/global"
 
@@ -117,7 +118,7 @@ func (b *BaseService[T]) GetDatasByFields(conditions []Condition) ([]*T, error) 
 	data := make([]*T, 0)
 	qry := b.GetDB().Model(new(T))
 	for _, v := range conditions {
-		qry = qry.Where(v.Field+v.Exp+" ?", v.Value)
+		qry = qry.Where(fmt.Sprintf("%s %s ?", v.Field, v.Exp), v.Value)
 	}
 
 	err := qry.Find(&data).Error

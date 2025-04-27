@@ -99,6 +99,7 @@ func (control *RoleController) Update(c *gin.Context) {
 	err = lc.UpdateRole(condition)
 	if err != nil {
 		ctl.FailWithError(err)
+		return
 	}
 
 	ctl.Success()
@@ -247,7 +248,7 @@ func (control *RoleController) RemoveApi(c *gin.Context) {
 func (control *RoleController) AddApi(c *gin.Context) {
 	ctl := controller.New(c)
 
-	condition := requests.NewRoleApi()
+	condition := requests.NewCreateRoleApis()
 	err := ctl.Bind(condition)
 	if err != nil {
 		ctl.FailWithError(err)

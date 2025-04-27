@@ -6,6 +6,7 @@ import (
 	"lime/internal/app/admin/requests"
 	"lime/internal/app/admin/service"
 	commonModel "lime/internal/common/model"
+	commonSrv "lime/internal/common/service"
 	"lime/internal/global"
 	"strings"
 )
@@ -66,7 +67,7 @@ func (lc *Role) UpdateRole(r *requests.UpdateRole) error {
 		return err
 	}
 
-	roleMenuSrv := service.NewRoleMenu(srv)
+	roleMenuSrv := service.NewRoleMenu(srv.GetDB())
 	// 删除角色的所有菜单
 	err = roleMenuSrv.DeleteByFields(map[string]any{"role_code": r.Code})
 	if err != nil {
@@ -190,10 +191,35 @@ func (lc *Role) RemoveApi(condition *requests.RoleApi) error {
 	return casbinSrv.RemoveRoleApi(condition.RoleCode, path, condition.Method)
 }
 
-func (lc *Role) AddApi(condition *requests.RoleApi) error {
+func (lc *Role) AddApi(condition *requests.CreateRoleApis) error {
 	casbinSrv := service.NewCasbin(global.DB)
-	path := strings.TrimPrefix(condition.Path, "/api/v1")
-	return casbinSrv.AddRoleApi(condition.RoleCode, path, condition.Method)
+
+	// 查询所有的接口信息
+	apiSrv := service.NewApiManage()
+	conditions := []commonSrv.Condition{
+		{Field: "id", Value: condition.Apis, Exp: "in"},
+	}
+	apis, err := apiSrv.GetDatasByFields(conditions)
+	if err != nil {
+		return err
+	}
+
+	datas := make([]service.RoleApiData, 0)
+	for _, v := range apis {
+		path := strings.TrimPrefix(v.Path, "/api/v1")
+		datas = append(datas, service.RoleApiData{
+			RoleCode: condition.RoleCode,
+			Path:     path,
+			Method:   v.Method.String(),
+		})
+	}
+
+	err = casbinSrv.AddRoleApis(datas)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (lc *Role) FreshCasbin() error {

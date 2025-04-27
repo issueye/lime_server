@@ -99,6 +99,15 @@ func NewRoleApi() *RoleApi {
 	return &RoleApi{}
 }
 
+type CreateRoleApis struct {
+	RoleCode string `json:"role_code" binding:"required"` // 角色编码
+	Apis     []uint `json:"apis" binding:"required"`      // 接口id列表
+}
+
+func NewCreateRoleApis() *CreateRoleApis {
+	return &CreateRoleApis{}
+}
+
 type RoleQryApi struct {
 	RoleCode string `json:"role_code" label:"角色编码" binding:"required"`
 	Keyword  string `json:"keyword" label:"关键词" form:"keyword"`
