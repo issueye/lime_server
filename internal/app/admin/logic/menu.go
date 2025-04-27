@@ -6,6 +6,7 @@ import (
 	"lime/internal/app/admin/requests"
 	"lime/internal/app/admin/service"
 	commonModel "lime/internal/common/model"
+	commonSrv "lime/internal/common/service"
 	"lime/internal/global"
 	"lime/pkg/utils"
 	"log/slog"
@@ -220,12 +221,35 @@ func (lc *MenuLogic) Del(id uint) error {
 }
 
 func (lc *MenuLogic) GetMenuTree(Role_code string) ([]*model.Menu, error) {
-	list, err := service.NewRole().GetRoleMenus(Role_code)
+	// 获取角色菜单
+	if Role_code == "" {
+		return nil, errors.New("角色编码不能为空")
+	}
+
+	roleMenuSrv := service.NewRoleMenu()
+	// 获取所有菜单
+	menuList, err := roleMenuSrv.GetDatasByField("role_code", Role_code)
 	if err != nil {
 		return nil, err
 	}
 
-	return lc.MakeTree(list), nil
+	menuCodes := make([]string, 0)
+	for _, menu := range menuList {
+		menuCodes = append(menuCodes, menu.MenuCode)
+	}
+
+	menuSrv := service.NewMenu()
+	condition := commonSrv.Condition{
+		Field: "code",
+		Value: menuCodes,
+		Exp:   "in",
+	}
+	menus, err := menuSrv.GetDatasByFields([]commonSrv.Condition{condition})
+	if err != nil {
+		return nil, err
+	}
+
+	return lc.MakeTree(menus), nil
 }
 
 func (lc *MenuLogic) MakeTree(list []*model.Menu) []*model.Menu {

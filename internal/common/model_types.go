@@ -3,6 +3,7 @@ package common
 import (
 	"database/sql/driver"
 	"encoding/json"
+	"fmt"
 )
 
 type UintArr []uint
@@ -10,7 +11,7 @@ type UintArr []uint
 // 实现 go.sql 接口
 func (u UintArr) Value() (driver.Value, error) {
 	if len(u) == 0 {
-		return nil, nil
+		return []byte{}, nil
 	}
 
 	return json.Marshal(u)
@@ -23,12 +24,25 @@ func (u *UintArr) Scan(v interface{}) error {
 		return nil
 	}
 
-	switch v := v.(type) {
+	// 这里的 v 是 []byte []uint8 或 string 类型
+	switch t := v.(type) {
 	case []byte:
-		return json.Unmarshal(v, u)
+		{
+			if len(t) == 0 {
+				*u = []uint{}
+				return nil
+			}
+			return json.Unmarshal(t, u)
+		}
 	case string:
-		return json.Unmarshal([]byte(v), u)
+		{
+			if t == "" {
+				*u = []uint{}
+				return nil
+			}
+			return json.Unmarshal([]byte(t), u)
+		}
 	default:
-		return nil
+		return fmt.Errorf("unsupported type: %T", v)
 	}
 }
