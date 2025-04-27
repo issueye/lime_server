@@ -1,6 +1,7 @@
 package requests
 
 import (
+	"lime/internal/common"
 	commonModel "lime/internal/common/model"
 )
 
@@ -28,10 +29,14 @@ func NewUpdatePassword() *UpdatePassword {
 }
 
 type UpdateUser struct {
-	Id       int    `json:"id" binding:"required"`
-	Username string `json:"username" binding:"required"`
-	NickName string `json:"nick_name"  binding:"required"`
-	Avatar   string `json:"avatar"`
+	Id       int                `json:"id" binding:"required"`
+	Username string             `json:"username" binding:"required"`
+	NickName string             `json:"nick_name" binding:"required"`
+	Sex      common.EnumSexType `json:"sex" default:"0"`
+	Mobile   string             `json:"mobile"`
+	Email    string             `json:"email"`
+	Remark   string             `json:"remark"`
+	Avatar   string             `json:"avatar"`
 }
 
 func NewUpdateUser() *UpdateUser {
@@ -39,10 +44,14 @@ func NewUpdateUser() *UpdateUser {
 }
 
 type CreateUser struct {
-	Username string `json:"username" binding:"required"`
-	NickName string `json:"nick_name"  binding:"required"`
-	RoleCode string `json:"role_code" binding:"required"`
-	Avatar   string `json:"avatar"`
+	Username string             `json:"username" binding:"required"`
+	NickName string             `json:"nick_name"  binding:"required"`
+	Sex      common.EnumSexType `json:"sex" default:"0"`
+	Mobile   string             `json:"mobile"`
+	Email    string             `json:"email"`
+	Remark   string             `json:"remark"`
+	RoleCode string             `json:"role_code" binding:"required"`
+	Avatar   string             `json:"avatar"`
 }
 
 func NewCreateUser() *CreateUser {

@@ -238,3 +238,36 @@ func (control *UserController) CreateUser(c *gin.Context) {
 
 	ctl.Success()
 }
+
+// ResetPwd doc
+//
+//	@tags			用户
+//	@Summary		重置密码
+//	@Description	重置密码
+//	@Produce		json
+//	@Success		200	{object}	controller.Response{}					"code: 200 成功"
+//	@Failure		500	{object}	controller.Response						"错误返回内容"
+//	@Router			/api/v1/user/resetPwd/{id} [get]
+//	@Security		ApiKeyAuth
+func (control *UserController) ResetPwd(c *gin.Context) {
+	ctl := controller.New(c)
+
+	id := ctl.Param("id")
+	if id == "" {
+		ctl.Fail("id不能为空")
+		return
+	}
+
+	i, err := strconv.Atoi(id)
+	if err != nil {
+		ctl.FailWithError(err)
+		return
+	}
+
+	err = logic.NewUserLogic().ResetPwd(uint(i))
+	if err != nil {
+		ctl.FailWithError(err)
+	}
+
+	ctl.Success()
+}

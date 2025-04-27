@@ -117,6 +117,7 @@ func InitRoleApi() {
 		{Ptype: "p", V0: "9999", V1: "/user/update", V2: common.HTTP_PUT.String(), V3: "", V4: "", V5: ""},
 		{Ptype: "p", V0: "9999", V1: "/user/delete/:id", V2: common.HTTP_DELETE.String(), V3: "", V4: "", V5: ""},
 		{Ptype: "p", V0: "9999", V1: "/user/add", V2: common.HTTP_POST.String(), V3: "", V4: "", V5: ""},
+		{Ptype: "p", V0: "9999", V1: "/user/resetPwd/:id", V2: common.HTTP_GET.String(), V3: "", V4: "", V5: ""},
 		// 角色管理
 		{Ptype: "p", V0: "9999", V1: "/role/list", V2: common.HTTP_POST.String(), V3: "", V4: "", V5: ""},
 		{Ptype: "p", V0: "9999", V1: "/role/update", V2: common.HTTP_PUT.String(), V3: "", V4: "", V5: ""},

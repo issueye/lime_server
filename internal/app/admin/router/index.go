@@ -49,6 +49,7 @@ func (router *Router) Register(r *gin.RouterGroup) {
 		user.PUT("update", router.UserHandlers.UpdateUser)        // 修改用户信息
 		user.DELETE("delete/:id", router.UserHandlers.DeleteUser) // 删除用户信息
 		user.POST("add", router.UserHandlers.CreateUser)          // 创建用户信息
+		user.GET("resetPwd/:id", router.UserHandlers.ResetPwd)    // 重置密码
 	}
 
 	role := r.Group("role").Use(middleware.CasbinHandler())

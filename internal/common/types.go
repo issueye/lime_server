@@ -34,3 +34,29 @@ const (
 	EMT_MENU      EnumMenuType = 0
 	EMT_DIRECTORY EnumMenuType = 1
 )
+
+type EnumSexType uint
+
+const (
+	EST_UNKNOWN EnumSexType = 0
+	EST_MALE    EnumSexType = 1
+	EST_FEMALE  EnumSexType = 2
+)
+
+// String
+//
+//	@Description: 转换为字符串
+//	@receiver e EnumSexType
+//	@return string
+func (e EnumSexType) String() string {
+	switch e {
+	case EST_UNKNOWN:
+		return "其他"
+	case EST_MALE:
+		return "男"
+	case EST_FEMALE:
+		return "女"
+	default:
+		return "男"
+	}
+}

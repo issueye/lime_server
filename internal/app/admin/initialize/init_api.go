@@ -25,6 +25,7 @@ func InitApis() {
 		{Title: "修改用户信息", Path: "/api/v1/user/update", Method: common.HTTP_PUT, ApiGroup: "用户管理"},
 		{Title: "删除用户信息", Path: "/api/v1/user/delete/:id", Method: common.HTTP_DELETE, ApiGroup: "用户管理"},
 		{Title: "创建用户信息", Path: "/api/v1/user/add", Method: common.HTTP_POST, ApiGroup: "用户管理"},
+		{Title: "重置用户密码", Path: "/api/v1/user/resetPwd/:id", Method: common.HTTP_PUT, ApiGroup: "用户管理"},
 
 		// 角色管理
 		{Title: "根据条件查询数据", Path: "/api/v1/role/list", Method: common.HTTP_POST, ApiGroup: "角色管理"},

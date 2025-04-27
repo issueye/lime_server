@@ -24,7 +24,11 @@ func (lc *UserLogic) UpdateUser(u *model.User) error {
 	data := make(map[string]any)
 	data["username"] = u.Username
 	data["nick_name"] = u.NickName
+	data["sex"] = u.Sex
 	data["avatar"] = u.Avatar
+	data["mobile"] = u.Mobile
+	data["email"] = u.Email
+	data["remark"] = u.Remark
 
 	return service.NewUser().UpdateByMap(u.ID, data)
 }
@@ -65,6 +69,10 @@ func (lc *UserLogic) UpdateUserInfo(u *requests.UpdateUser) error {
 	data := make(map[string]any)
 	data["username"] = u.Username
 	data["nick_name"] = u.NickName
+	data["sex"] = u.Sex
+	data["mobile"] = u.Mobile
+	data["email"] = u.Email
+	data["remark"] = u.Remark
 	data["avatar"] = u.Avatar
 
 	return service.NewUser().UpdateByMap(uint(u.Id), data)
@@ -78,6 +86,15 @@ func (lc *UserLogic) GetUserById(id uint) (*model.User, error) {
 	return service.NewUser().GetById(id)
 }
 
+func (lc *UserLogic) ResetPwd(id uint) error {
+	pwd, err := common.MakePassword(global.DEFAULT_PWD)
+	if err != nil {
+		return err
+	}
+
+	return service.NewUser().UpdateByMap(id, map[string]any{"password": pwd})
+}
+
 func (lc *UserLogic) CreateUser(u *requests.CreateUser) error {
 	pwd, err := common.MakePassword(global.DEFAULT_PWD)
 	if err != nil {
@@ -88,6 +105,10 @@ func (lc *UserLogic) CreateUser(u *requests.CreateUser) error {
 		Username: u.Username,
 		NickName: u.NickName,
 		Avatar:   u.Avatar,
+		Sex:      u.Sex,
+		Mobile:   u.Mobile,
+		Email:    u.Email,
+		Remark:   u.Remark,
 		Password: pwd,
 		UserRole: &model.UserRole{
 			RoleCode: u.RoleCode,
