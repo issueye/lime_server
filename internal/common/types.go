@@ -27,3 +27,10 @@ const (
 	CTT_YAML     EnumDictContentType = 6 // yaml
 	CTT_TOML     EnumDictContentType = 7 // toml
 )
+
+type EnumMenuType uint
+
+const (
+	EMT_MENU      EnumMenuType = 0
+	EMT_DIRECTORY EnumMenuType = 1
+)

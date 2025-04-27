@@ -38,20 +38,3 @@ func NewRole(data RoleBase) *Role {
 		RoleBase: data,
 	}
 }
-
-type UserRole struct {
-	model.BaseModel
-	UserID   uint   `gorm:"column:user_id;not null;comment:关联的用户ID;" json:"user_id"`
-	RoleCode string `gorm:"column:role_code;not null;comment:关联的角色ID;" json:"role_code"`
-}
-
-func (ur UserRole) TableName() string { return "sys_user_role" }
-
-type RoleMenu struct {
-	model.BaseModel
-	RoleCode string `gorm:"column:role_code;not null;comment:关联的角色编码;" json:"role_code"`
-	MenuCode string `gorm:"column:menu_code;not null;comment:关联的菜单编码;" json:"menu_code"`
-}
-
-// TableName
-func (RoleMenu) TableName() string { return "sys_role_menus" }

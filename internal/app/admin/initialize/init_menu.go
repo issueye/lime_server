@@ -3,6 +3,7 @@ package initialize
 import (
 	"lime/internal/app/admin/logic"
 	"lime/internal/app/admin/model"
+	"lime/internal/common"
 	"log/slog"
 )
 
@@ -18,7 +19,7 @@ func InitMenus() {
 			Visible:        true,
 			Icon:           "HomeFilled",
 			ParentCode:     "",
-			MenuType:       model.EMT_MENU,
+			MenuType:       common.EMT_MENU,
 			IsLink:         0,
 			IsCanNotRemove: 1,
 			IsHome:         1,
@@ -32,7 +33,7 @@ func InitMenus() {
 			Visible:        true,
 			Icon:           "Operation",
 			ParentCode:     "",
-			MenuType:       model.EMT_DIRECTORY,
+			MenuType:       common.EMT_DIRECTORY,
 			IsLink:         0,
 			IsCanNotRemove: 1,
 		},
@@ -45,7 +46,7 @@ func InitMenus() {
 			Visible:        true,
 			Icon:           "User",
 			ParentCode:     "9000",
-			MenuType:       model.EMT_MENU,
+			MenuType:       common.EMT_MENU,
 			IsLink:         0,
 			IsCanNotRemove: 1,
 		},
@@ -58,7 +59,7 @@ func InitMenus() {
 			Visible:        true,
 			Icon:           "Avatar",
 			ParentCode:     "9000",
-			MenuType:       model.EMT_MENU,
+			MenuType:       common.EMT_MENU,
 			IsLink:         0,
 			IsCanNotRemove: 1,
 		},
@@ -71,7 +72,7 @@ func InitMenus() {
 			Visible:        true,
 			Icon:           "Menu",
 			ParentCode:     "9000",
-			MenuType:       model.EMT_MENU,
+			MenuType:       common.EMT_MENU,
 			IsLink:         0,
 			IsCanNotRemove: 1,
 		},
@@ -84,7 +85,7 @@ func InitMenus() {
 			Visible:        true,
 			Icon:           "Menu",
 			ParentCode:     "9000",
-			MenuType:       model.EMT_MENU,
+			MenuType:       common.EMT_MENU,
 			IsLink:         0,
 			IsCanNotRemove: 1,
 		},
@@ -97,7 +98,7 @@ func InitMenus() {
 			Visible:        true,
 			Icon:           "List",
 			ParentCode:     "9000",
-			MenuType:       model.EMT_MENU,
+			MenuType:       common.EMT_MENU,
 			IsLink:         0,
 			IsCanNotRemove: 1,
 		},
@@ -110,7 +111,7 @@ func InitMenus() {
 			Visible:        true,
 			Icon:           "Tools",
 			ParentCode:     "9000",
-			MenuType:       model.EMT_MENU,
+			MenuType:       common.EMT_MENU,
 			IsLink:         0,
 			IsCanNotRemove: 1,
 		},
