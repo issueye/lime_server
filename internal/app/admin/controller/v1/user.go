@@ -234,6 +234,7 @@ func (control *UserController) CreateUser(c *gin.Context) {
 	err = logic.NewUserLogic().CreateUser(data)
 	if err != nil {
 		ctl.FailWithError(err)
+		return
 	}
 
 	ctl.Success()
@@ -247,7 +248,7 @@ func (control *UserController) CreateUser(c *gin.Context) {
 //	@Produce		json
 //	@Success		200	{object}	controller.Response{}					"code: 200 成功"
 //	@Failure		500	{object}	controller.Response						"错误返回内容"
-//	@Router			/api/v1/user/resetPwd/{id} [get]
+//	@Router			/api/v1/user/resetPwd/{id} [put]
 //	@Security		ApiKeyAuth
 func (control *UserController) ResetPwd(c *gin.Context) {
 	ctl := controller.New(c)
@@ -267,6 +268,7 @@ func (control *UserController) ResetPwd(c *gin.Context) {
 	err = logic.NewUserLogic().ResetPwd(uint(i))
 	if err != nil {
 		ctl.FailWithError(err)
+		return
 	}
 
 	ctl.Success()

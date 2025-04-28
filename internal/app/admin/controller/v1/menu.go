@@ -182,6 +182,7 @@ func (control *MenuController) Update(c *gin.Context) {
 	err = logic.NewMenuLogic().Update(menu)
 	if err != nil {
 		ctl.FailWithError(err)
+		return
 	}
 
 	ctl.Success()
