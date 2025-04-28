@@ -1,7 +1,6 @@
 package logic
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"lime/internal/app/admin/model"
@@ -12,7 +11,6 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func FindUserByName(name string) (*response.UserInfo, error) {
@@ -46,7 +44,8 @@ func Login(info requests.LoginRequest) (model.User, string, error) {
 		return model.User{}, "", errors.New("账号密码错误")
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(userDB.Password), []byte(info.Password)); err != nil {
+	err = common.ComparePassword(userDB.Password, info.Password)
+	if err != nil {
 		return model.User{}, "", errors.New("账号密码错误")
 	}
 
@@ -79,7 +78,7 @@ func GetUser(c *gin.Context) (model.User, error) {
 	user.UserRole = new(model.UserRole)
 	user.UserRole.RoleCode = token.RoleCode
 
-	data, _ := json.Marshal(&user)
-	fmt.Printf("data: %s\n", string(data))
+	// data, _ := json.Marshal(&user)
+	// fmt.Printf("data: %s\n", string(data))
 	return user, nil
 }

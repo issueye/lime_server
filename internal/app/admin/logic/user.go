@@ -8,6 +8,7 @@ import (
 	"lime/internal/common"
 	commonModel "lime/internal/common/model"
 	"lime/internal/global"
+	"log/slog"
 )
 
 type UserLogic struct{}
@@ -46,17 +47,14 @@ func (lc *UserLogic) UpdatePassword(user model.User, u *requests.UpdatePassword)
 	}
 
 	// 加密密码
-	pwd, err := common.MakePassword(u.Oldpassword)
+	err = common.ComparePassword(userInfo.Password, u.Oldpassword)
 	if err != nil {
-		return err
-	}
-
-	if userInfo.Password != pwd {
-		return errors.New("旧密码错误")
+		slog.Error("密码错误", slog.String("错误信息", err.Error()))
+		return errors.New("密码错误")
 	}
 
 	// 加密密码
-	pwd, err = common.MakePassword(u.Password)
+	pwd, err := common.MakePassword(u.Password)
 	if err != nil {
 		return err
 	}

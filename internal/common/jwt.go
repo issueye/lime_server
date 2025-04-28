@@ -90,3 +90,8 @@ func MakePassword(password string) (string, error) {
 	}
 	return string(hashedPassword), nil
 }
+
+// 比较密码
+func ComparePassword(hashedPassword, password string) error {
+	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+}
